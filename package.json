@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "npx tsx scripts/emit-twin-data.mts",
-    "build": "tsc && vite build",
+    "build": "tsc && npx tsx scripts/build.mts",
     "preview": "vite preview",
     "pretest": "npx tsx scripts/emit-twin-data.mts",
     "test": "vitest run",

@@ -50,9 +50,8 @@ describe('DOM Integration Tests', () => {
     expect(html).toContain('three');
   });
   
-  it('should have vite module script', () => {
+  it('should have twin-data.js script', () => {
     html = fs.readFileSync(path.resolve(__dirname, '../../index.html'), 'utf-8');
-    expect(html).toContain('type="module"');
-    expect(html).toContain('/src/main.ts');
+    expect(html).toContain('twin-data.js');
   });
 });
