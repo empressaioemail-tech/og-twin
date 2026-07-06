@@ -1870,6 +1870,15 @@
   ];
   const CLUSTERS_BY_NAME = Object.fromEntries(CLUSTERS.map(c => [c.name, c]));
 
+  // Surgical data splice: replace CLUSTERS with seeded data when available
+  if (window.__TWIN_SOURCE__ !== 'synthetic' && window.__TWIN_DATA__?.clusters?.length) {
+    CLUSTERS.length = 0;
+    CLUSTERS.push(...window.__TWIN_DATA__.clusters);
+    // Rebuild CLUSTERS_BY_NAME map
+    Object.keys(CLUSTERS_BY_NAME).forEach(k => delete CLUSTERS_BY_NAME[k]);
+    CLUSTERS.forEach(c => CLUSTERS_BY_NAME[c.name] = c);
+  }
+
   // ---- Metrics (operational layers) ----
   const METRICS = [
     { id: 'production_variance', label: 'Production variance', color: [86, 180, 233],  unit: '%',     valueOf: w => w.production_variance, fmt: v => v.toFixed(1) + ' %' },
@@ -2029,6 +2038,12 @@
     }
   }
 
+  // Surgical data splice: replace WELLS with seeded data when available
+  if (window.__TWIN_SOURCE__ !== 'synthetic' && window.__TWIN_DATA__?.wells?.length) {
+    WELLS.length = 0;
+    WELLS.push(...window.__TWIN_DATA__.wells);
+  }
+
   // ---- Day / scrubber ----
   const TOTAL_DAYS = 30;
   let currentDay = TOTAL_DAYS;
@@ -2171,6 +2186,13 @@
     { id: 'completion_geometry', pct: 14 },
     { id: 'healthy',             pct: 39 }
   ];
+
+  // Surgical data splice: replace CAUSE_BREAKDOWN with seeded data when available
+  if (window.__TWIN_SOURCE__ !== 'synthetic' && window.__TWIN_DATA__?.causeBreakdown?.length) {
+    CAUSE_BREAKDOWN.length = 0;
+    CAUSE_BREAKDOWN.push(...window.__TWIN_DATA__.causeBreakdown);
+  }
+
   const causeListEl = document.getElementById('cause-list');
   function renderCauseBreakdown() {
     causeListEl.innerHTML = CAUSE_BREAKDOWN.map(c => {
@@ -3133,6 +3155,13 @@
     { day: 28, type: 'workover', label: 'Cluster valve service Ã‚Â· Gaines',    detail: 'Routine; no production loss' },
     { day: 29, type: 'failure',  label: 'Pipeline trip Ã‚Â· Eddy County NM',    detail: '14 wells curtailed' }
   ];
+
+  // Surgical data splice: replace TIMELINE_EVENTS with seeded data when available
+  if (window.__TWIN_SOURCE__ !== 'synthetic' && window.__TWIN_DATA__?.timelineEvents?.length) {
+    TIMELINE_EVENTS.length = 0;
+    TIMELINE_EVENTS.push(...window.__TWIN_DATA__.timelineEvents);
+  }
+
   function renderMarkers() {
     const el = document.getElementById('markers-track');
     el.innerHTML = '';
@@ -3213,6 +3242,14 @@
   });
   // If the user scrubs the timeline manually, pause playback.
   document.getElementById('timeline').addEventListener('mousedown', stopPlay);
+
+  // Surgical data splice: update region labels when seeded data is active
+  if (window.__TWIN_SOURCE__ !== 'synthetic' && window.__TWIN_DATA__?.regionLabel) {
+    const railReg = document.querySelector('#rail .reg');
+    const headerReg = document.querySelector('#header .reg');
+    if (railReg) railReg.textContent = window.__TWIN_DATA__.regionLabel;
+    if (headerReg) headerReg.textContent = window.__TWIN_DATA__.regionLabel;
+  }
 
   // Init
   renderLayerList();
