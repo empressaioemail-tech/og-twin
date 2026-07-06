@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reeves County · Permian Basin</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200&display=swap">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="rail">
+    <h1>Reeves County</h1>
+    <div class="reg">Permian Basin · Field Health</div>
+
+    <div class="pattern-card" id="pattern-card">
+      <div class="head">ACTION REQUIRED</div>
+      <div class="body">
+        <b>MD 22 03H is diverging from pad behavior</b><br>
+        Oil rate is down 18%, while offset wells remain within expected range.
+      </div>
+      <div class="cta">→ View pad inspector</div>
+    </div>
+
+    <div class="section-label">
+      Operational layers
+    </div>
+    <div id="layer-list"></div>
+
+    <div class="section-label">
+      Cause breakdown
+    </div>
+    <div id="cause-list" class="cause-list"></div>
+
+    <div class="section-label">Top performers</div>
+    <div id="top-performers"></div>
+
+    <div class="section-label section-label-low">Lowest performers</div>
+    <div id="bottom-performers"></div>
+
+    <div class="section-label">
+      Filters
+      <button type="button" id="filter-reset" class="filter-reset" hidden>Reset</button>
+    </div>
+
+    <div class="filter-block">
+      <div id="cluster-dd" class="filter-dropdown" data-open="false">
+        <button type="button" id="cluster-dd-trigger" class="filter-dd-trigger" aria-expanded="false">
+          <span class="filter-dd-label">Cluster</span>
+          <span id="cluster-dd-count" class="filter-dd-count">All</span>
+          <span class="filter-dd-chev">▼</span>
+        </button>
+        <div class="filter-dd-panel">
+          <div class="filter-dd-title">
+            <span>Clusters</span>
+            <button type="button" id="cluster-dd-toggle-all" class="filter-dd-toggle-all">Uncheck all</button>
+          </div>
+          <div id="cluster-chips" class="filter-chips"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-block">
+      <div class="filter-sublabel">
+        <span>Anomaly threshold</span>
+        <span class="filter-val"><span id="anom-thresh-val">0</span>%</span>
+      </div>
+      <input type="range" id="anom-thresh" class="filter-slider" min="0" max="100" value="0" />
+    </div>
+
+    <div class="filter-stats" id="filter-stats"></div>
+  </div>
+
+  <div id="header">
+    <div class="reg">OPERATIONS LENS</div>
+    <div class="ttl">Reeves County · Permian Basin</div>
+    <div class="mode">Real-time field health</div>
+  </div>
+
+  <div id="legend">
+    <div class="title">Performance</div>
+    <div class="ramp"></div>
+    <div class="scale">
+      <span>High</span>
+      <span>Low</span>
+    </div>
+  </div>
+
+  <div class="map-mode-toggle" id="map-mode-toggle">
+    <button type="button" class="mmt-btn active" data-mode="3d">3D</button>
+    <button type="button" class="mmt-btn" data-mode="2d">2D</button>
+  </div>
+
+  <div id="map-wrap">
+    <div id="map"></div>
+    <div class="well-hover-tip" id="well-hover-tip">
+      <div class="wht-name"></div>
+      <div class="wht-coord"></div>
+    </div>
+  </div>
+
+  <div id="scrubber">
+    <button type="button" id="play-btn">▶</button>
+    <div id="timeline">
+      <div class="tl-inner">
+        <div id="markers-track"></div>
+        <div id="playhead"></div>
+      </div>
+    </div>
+    <div id="day-readout"></div>
+  </div>
+
+  <div id="group-inspector" class=""></div>
+  <div id="well-detail-panel" class=""></div>
+
+  <div id="app"></div>
+  <link rel="stylesheet" href="/src/style.css">
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

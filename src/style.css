@@ -1,0 +1,68 @@
+:root {
+  --bg: #07090d;
+  --panel: #0f131a;
+  --panel-hi: #161b25;
+  --border: #1a2030;
+  --text: #d6dde8;
+  --muted: #7a8597;
+  --accent: #33d8ff;
+  --warn: #f0b14e;
+  --bad: #d6334e;
+  --good: #3fb950;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#map-wrap {
+  flex: 1;
+  position: relative;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background: var(--bg);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Minimal styles for demonstration - full mockup styles would be extracted here */
