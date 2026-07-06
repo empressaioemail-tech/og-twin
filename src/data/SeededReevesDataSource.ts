@@ -46,12 +46,6 @@ export class SeededReevesDataSource implements TwinDataSource {
     };
   }
   
-  private async ensureLoaded(): Promise<void> {
-    if (!this.fixtureData) {
-      await this.loadFixtures();
-    }
-  }
-  
   getWells(): Well[] {
     if (!this.wells && this.fixtureData) {
       // Map atom fixtures to view-model wells

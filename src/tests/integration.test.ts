@@ -1,27 +1,39 @@
-import { describe, it, expect } from 'vitest';
-import reevesWells01 from '../fixtures/reeves-wells-01.json';
-import reevesWells02 from '../fixtures/reeves-wells-02.json';
-import reevesWells03 from '../fixtures/reeves-wells-03.json';
-import { mapWellAtomToViewModel, validateReportingSplit } from '../src/data/mapping';
-import type { FixtureFile, ProductionTimeseriesAtom } from '../src/types/atoms';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { mapWellAtomToViewModel, validateReportingSplit } from '../data/mapping';
+import type { FixtureFile, ProductionTimeseriesAtom } from '../types/atoms';
 
 describe('Fixture Validation', () => {
-  const fixtureFiles = [
-    { name: 'reeves-wells-01.json', data: reevesWells01 },
-    { name: 'reeves-wells-02.json', data: reevesWells02 },
-    { name: 'reeves-wells-03.json', data: reevesWells03 }
-  ];
+  let fixtures: Array<{name: string; data: FixtureFile}> = [];
+  
+  beforeAll(() => {
+    const fixtureFiles = [
+      'reeves-wells-01.json',
+      'reeves-wells-02.json',
+      'reeves-wells-03.json'
+    ];
+    
+    fixtures = fixtureFiles.map(filename => {
+      const content = readFileSync(join(process.cwd(), 'fixtures', filename), 'utf-8');
+      return {
+        name: filename,
+        data: JSON.parse(content) as FixtureFile
+      };
+    });
+  });
   
   it('should have fixtures that are valid JSON', () => {
-    fixtureFiles.forEach(fixture => {
+    expect(fixtures.length).toBe(3);
+    fixtures.forEach(fixture => {
       expect(fixture.data).toBeDefined();
       expect(typeof fixture.data).toBe('object');
     });
   });
   
   it('should have well atoms with required fields', () => {
-    fixtureFiles.forEach(fixture => {
-      const data = fixture.data as FixtureFile;
+    fixtures.forEach(fixture => {
+      const data = fixture.data;
       expect(data.wells).toBeDefined();
       expect(Array.isArray(data.wells)).toBe(true);
       
@@ -46,8 +58,8 @@ describe('Fixture Validation', () => {
   });
   
   it('should have all wells in Reeves County area', () => {
-    fixtureFiles.forEach(fixture => {
-      const data = fixture.data as FixtureFile;
+    fixtures.forEach(fixture => {
+      const data = fixture.data;
       
       data.wells.forEach(well => {
         // Reeves County is roughly between -104.2 to -103.0 longitude, 31.0 to 32.0 latitude
@@ -60,8 +72,8 @@ describe('Fixture Validation', () => {
   });
   
   it('should have real-format API-14 DIDs', () => {
-    fixtureFiles.forEach(fixture => {
-      const data = fixture.data as FixtureFile;
+    fixtures.forEach(fixture => {
+      const data = fixture.data;
       
       data.wells.forEach(well => {
         // API-14 format: 42 (Texas) - 501 (Reeves County) - 5-digit sequence
@@ -74,8 +86,8 @@ describe('Fixture Validation', () => {
   
   it('should load ~30 wells total across fixtures', () => {
     let totalWells = 0;
-    fixtureFiles.forEach(fixture => {
-      const data = fixture.data as FixtureFile;
+    fixtures.forEach(fixture => {
+      const data = fixture.data;
       totalWells += data.wells.length;
     });
     
@@ -187,8 +199,15 @@ describe('Reporting Split Rule', () => {
 });
 
 describe('Mapping Layer', () => {
+  let fixtureData: FixtureFile;
+  
+  beforeAll(() => {
+    const content = readFileSync(join(process.cwd(), 'fixtures', 'reeves-wells-01.json'), 'utf-8');
+    fixtureData = JSON.parse(content) as FixtureFile;
+  });
+  
   it('should map well atom to view model', () => {
-    const wellAtom = reevesWells01.wells[0];
+    const wellAtom = fixtureData.wells[0];
     const mapped = mapWellAtomToViewModel(wellAtom, [], undefined);
     
     expect(mapped).toBeDefined();
@@ -208,7 +227,7 @@ describe('Mapping Layer', () => {
   });
   
   it('should preserve geographic coordinates through mapping', () => {
-    const wells = reevesWells01.wells;
+    const wells = fixtureData.wells;
     const mapped = wells.map(w => mapWellAtomToViewModel(w, [], undefined));
     
     wells.forEach((wellAtom, i) => {
