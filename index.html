@@ -1,127 +1,1853 @@
+<!-- Chris frontend mockup, delivered 2026-07-06. Look/feel/flow spec for the Reeves twin viz layer (og-twin). Captured from session transcript; some non-ASCII glyphs may carry encoding artifacts vs the original. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reeves County · Permian Basin</title>
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200&display=swap">
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-    }
+<meta charset="utf-8">
+<title>Permian Field Health</title>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200&display=swap">
+<script src="https://unpkg.com/deck.gl@9.0.33/dist.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
   }
-  </script>
+}
+</script>
+<style>
+  :root {
+    --bg: #07090d;
+    --panel: #0f131a;
+    --panel-hi: #161b25;
+    --border: #1a2030;
+    --text: #d6dde8;
+    --muted: #7a8597;
+    --accent: #33d8ff;
+    --warn:   #f0b14e;
+    --bad:    #d6334e;
+    --good:   #3fb950;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; width: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 13px;
+    overflow: hidden;
+  }
+  body { display: flex; flex-direction: column; height: 100vh; }
+
+  /* Rail is an OVERLAY on top of the map (not a flex item) so the
+     map canvas always spans the full viewport width ------ when the rail
+     fades on hand-off, the map underneath is already there. */
+  #rail {
+    position: absolute; top: 0; left: 0; bottom: 0; width: 360px;
+    background: rgba(8,11,16,0.92); border-right: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    padding: 24px 22px 92px; overflow-y: auto; z-index: 20;
+  }
+  #rail h1 {
+    font-size: 20px; font-weight: 600; margin: 0 0 4px;
+    color: var(--text); letter-spacing: 0.01em; line-height: 1.2;
+  }
+  #rail .reg { font-size: 13px; color: var(--muted); letter-spacing: 0.01em; margin-bottom: 26px; }
+
+  .pattern-card {
+    border: 1px solid #4a2730;
+    background: linear-gradient(180deg, rgba(95,28,40,0.32), rgba(60,18,28,0.18));
+    border-radius: 6px; padding: 12px 13px;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    margin-bottom: 22px;
+  }
+  .pattern-card:hover { border-color: #6c3744; background: linear-gradient(180deg, rgba(110,38,52,0.42), rgba(70,22,32,0.24)); }
+  .pattern-card .head { color: var(--bad); font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+  .pattern-card .body { font-size: 12.5px; line-height: 1.45; color: var(--text); margin-top: 6px; }
+  .pattern-card .body b { color: #fff; }
+  .pattern-card .cta { display: inline-block; margin-top: 8px; color: var(--accent); font-size: 11.5px; }
+
+  .section-label { font-size: 14px; color: #b8c1cf; text-transform: none; letter-spacing: 0.01em; font-weight: 500; margin: 22px 0 10px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .filter-reset {
+    background: rgba(20,28,45,0.55); border: 1px solid #1a2030;
+    color: var(--muted); padding: 3px 9px; border-radius: 3px;
+    font: inherit; font-size: 11px; cursor: pointer;
+    transition: border-color 0.12s, color 0.12s;
+  }
+  .filter-reset:hover { color: var(--text); border-color: #2a3548; }
+  .filter-block { margin-bottom: 14px; }
+  .filter-sublabel {
+    font-size: 11px; color: var(--muted);
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 6px; letter-spacing: 0.02em;
+  }
+  /* Dropdown wrapper for cluster filter */
+  .filter-dropdown { position: relative; }
+  .filter-dd-trigger {
+    width: 100%; display: flex; align-items: center; gap: 8px;
+    background: rgba(20,28,45,0.55); border: 1px solid #1a2030;
+    color: var(--text); padding: 8px 11px; border-radius: 5px;
+    font: inherit; font-size: 12px; cursor: pointer; text-align: left;
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .filter-dd-trigger:hover { border-color: #2a3548; }
+  .filter-dropdown[data-open="true"] .filter-dd-trigger {
+    border-color: rgba(51,216,255,0.45);
+    background: rgba(51,216,255,0.08);
+  }
+  .filter-dd-label { flex: 1; font-weight: 500; }
+  .filter-dd-count {
+    color: var(--muted); font-size: 11px; font-feature-settings: 'tnum';
+  }
+  .filter-dropdown[data-open="true"] .filter-dd-count { color: var(--accent); }
+  .filter-dd-chev {
+    color: var(--muted); font-size: 10px;
+    transition: transform 0.15s;
+  }
+  .filter-dropdown[data-open="true"] .filter-dd-chev {
+    transform: rotate(180deg); color: var(--accent);
+  }
+  .filter-dd-panel {
+    display: none;
+    position: absolute; left: 0; right: 0; top: calc(100% + 6px);
+    z-index: 30;
+    background: rgba(10,14,22,0.96);
+    border: 1px solid rgba(51,216,255,0.30);
+    border-radius: 6px;
+    padding: 10px 12px 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+    max-height: 320px; overflow-y: auto;
+  }
+  .filter-dropdown[data-open="true"] .filter-dd-panel { display: block; }
+  .filter-dd-title {
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    padding-bottom: 6px; border-bottom: 1px solid #14192a;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .filter-dd-toggle-all {
+    background: none; border: none;
+    color: var(--accent); font: inherit;
+    font-size: 11.5px; letter-spacing: 0.01em;
+    cursor: pointer; padding: 0;
+    transition: color 0.12s, opacity 0.12s;
+  }
+  .filter-dd-toggle-all:hover { color: var(--text); }
+  .filter-val { color: var(--text); font-feature-settings: 'tnum'; font-weight: 500; }
+  .filter-chips {
+    display: flex; flex-wrap: wrap; gap: 5px;
+  }
+  .filter-chip {
+    background: rgba(20,28,45,0.55); border: 1px solid #1a2030;
+    color: var(--muted); padding: 4px 10px; border-radius: 12px;
+    font: inherit; font-size: 11px; cursor: pointer;
+    transition: border-color 0.12s, color 0.12s, background 0.12s;
+    line-height: 1.2;
+  }
+  .filter-chip:hover { color: var(--text); border-color: #2a3548; }
+  .filter-chip.active {
+    color: var(--accent); border-color: rgba(51,216,255,0.45);
+    background: rgba(51,216,255,0.10);
+  }
+  .filter-chip.active::before {
+    content: '------ '; color: var(--accent); margin-right: 1px;
+  }
+  .filter-slider {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 4px; border-radius: 2px;
+    background: linear-gradient(to right,
+      var(--accent) 0%, var(--accent) var(--filled, 0%),
+      rgba(120,150,200,0.18) var(--filled, 0%), rgba(120,150,200,0.18) 100%);
+    outline: none; cursor: pointer; padding: 0;
+  }
+  .filter-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent); border: 2px solid #0c1018;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(51,216,255,0.55);
+  }
+  .filter-slider::-moz-range-thumb {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent); border: 2px solid #0c1018;
+    cursor: pointer;
+  }
+  .filter-stats {
+    font-size: 11px; color: var(--muted);
+    font-feature-settings: 'tnum';
+    margin-top: -2px;
+  }
+  .filter-stats b { color: var(--text); font-weight: 500; }
+  .section-label.section-label-low { color: var(--bad); }
+  /* Top-performer cells ------ tinted with the legend's "high performance" cyan */
+  .well-action.perf-high {
+    border-color: rgba(1,152,189,0.36);
+    background: rgba(1,152,189,0.10);
+  }
+  .well-action.perf-high:hover { border-color: rgba(73,227,206,0.65); }
+  .well-action.perf-high .action-meta .val { color: rgb(73,227,206); }
+  /* Lowest-performer cells ------ tinted with the legend's "low performance" red */
+  .well-action.perf-low {
+    border-color: rgba(214,51,78,0.40);
+    background: rgba(214,51,78,0.10);
+  }
+  .well-action.perf-low:hover { border-color: rgba(214,51,78,0.65); }
+  .well-action.perf-low .action-meta .val { color: var(--bad); }
+  /* Selected state ------ colour matches the row's performance band, name stays white */
+  .well-action.selected.perf-high {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 0 14px rgba(51,216,255,0.30);
+    background: rgba(51,216,255,0.10);
+  }
+  .well-action.selected.perf-high:hover { border-color: var(--accent); }
+  .well-action.selected.perf-low {
+    border-color: var(--bad);
+    box-shadow: 0 0 0 1px var(--bad), 0 0 14px rgba(214,51,78,0.30);
+    background: rgba(214,51,78,0.14);
+  }
+  .well-action.selected.perf-low:hover { border-color: var(--bad); }
+  .well-action.selected .action-name { color: var(--text); }
+  /* Pattern card sits below the lowest-performers list as their alert summary */
+  #bottom-performers + .pattern-card { margin-top: 8px; }
+  .kpi {
+    border: 1px solid var(--border); background: var(--panel);
+    border-radius: 6px; padding: 12px 14px; margin-bottom: 8px;
+  }
+  .kpi .lbl { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .kpi .val { font-size: 22px; font-weight: 600; color: var(--text); margin-top: 4px; line-height: 1; }
+  .kpi .val .unit { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 4px; }
+  .kpi .delta { font-size: 11px; margin-top: 6px; }
+  .kpi .delta.bad { color: var(--bad); }
+  .kpi .delta.good { color: var(--good); }
+  .kpi .sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+  /* Layer pickers (operational layers) */
+  .layer-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; border: 1px solid transparent; border-radius: 5px;
+    cursor: pointer; transition: background 0.12s, border-color 0.12s;
+    font-size: 12px;
+  }
+  .layer-row:hover { background: rgba(255,255,255,0.03); }
+  .layer-row.active { background: rgba(51,216,255,0.08); border-color: rgba(51,216,255,0.35); }
+  .layer-row .dot { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--muted); display: inline-block; margin-right: 8px; }
+  .layer-row.active .dot { background: var(--accent); border-color: var(--accent); }
+  .layer-row .name { flex: 1; }
+  .layer-row .val { color: var(--muted); font-feature-settings: 'tnum'; }
+  .layer-row.active .val { color: var(--text); font-weight: 600; }
+
+  .cause-list .row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 11.5px; }
+  .cause-list .swatch { width: 10px; height: 10px; border-radius: 2px; }
+  .cause-list .label { flex: 1; }
+  .cause-list .bar-wrap { width: 90px; height: 4px; background: var(--panel-hi); border-radius: 2px; overflow: hidden; }
+  .cause-list .bar { height: 100%; }
+  .cause-list .pct { width: 32px; text-align: right; color: var(--muted); font-feature-settings: 'tnum'; }
+
+  .well-action {
+    border: 1px solid var(--border); background: var(--panel);
+    border-radius: 5px; padding: 9px 11px; margin-bottom: 6px; cursor: pointer;
+    transition: border-color 0.12s;
+  }
+  .well-action:hover { border-color: #2a3548; }
+  .action-name { font-size: 12px; color: var(--text); font-weight: 500; }
+  .action-meta { font-size: 10.5px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; margin-top: 3px; }
+  .action-meta .val { color: #3fb950; font-weight: 600; font-feature-settings: 'tnum'; }
+
+  #map-wrap { flex: 1; position: relative; }
+  #map { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
+
+  /* Hover tooltip on map well columns */
+  .well-hover-tip {
+    position: absolute; z-index: 18;
+    background: rgba(10,14,22,0.94);
+    border: 1px solid #1a2030;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 12px; color: var(--text);
+    pointer-events: none;
+    transform: translate(14px, -50%);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+  }
+  .well-hover-tip.show { opacity: 1; }
+  .wht-name { font-weight: 600; }
+  .wht-coord {
+    color: var(--muted); font-size: 11px;
+    margin-top: 2px; font-feature-settings: 'tnum';
+  }
+  /* 3D / 2D toggle ------ top-right corner of the map */
+  .map-mode-toggle {
+    position: absolute; top: 14px; right: 60px; z-index: 12;
+    display: inline-flex;
+    background: rgba(8,11,16,0.86);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+  }
+  .mmt-btn {
+    background: none; border: none;
+    color: var(--muted); font: inherit;
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.05em;
+    padding: 5px 11px; border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+  }
+  .mmt-btn:hover { color: var(--text); }
+  .mmt-btn.active {
+    background: rgba(51,216,255,0.12);
+    color: var(--accent);
+  }
+
+  /* 3-button action stack pinned to the bottom of a clicked well's column */
+  .well-actions {
+    position: absolute; z-index: 30;
+    display: flex; flex-direction: column; gap: 6px;
+    /* Anchor sits at the well's projected lng/lat (base of the column).
+       Push the stack down by a small offset so its bottom edge aligns
+       with the visible bottom of the well column / hex shape (the
+       projection lands roughly at the hex's vertical centre). */
+    transform: translate(46px, calc(-100% + 18px));
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.12s ease, transform 0.12s ease;
+  }
+  .well-actions.open { opacity: 1; pointer-events: auto; }
+  .well-actions[hidden] { display: none; }
+  .wa-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px;
+    background: rgba(10,14,22,0.94);
+    border: 1px solid rgba(51,216,255,0.30);
+    border-radius: 6px;
+    color: var(--text);
+    font: inherit; font-size: 14px; font-weight: 500;
+    cursor: pointer; text-align: left;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.55);
+    transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.12s;
+  }
+  .wa-btn:hover {
+    background: rgba(51,216,255,0.12);
+    border-color: rgba(51,216,255,0.65);
+    color: var(--accent);
+    transform: translateX(2px);
+  }
+  .wa-icon {
+    color: var(--accent); flex-shrink: 0;
+    /* Material Symbols sizing ------ keep proportional to the 14px button text */
+    font-size: 20px; line-height: 1; width: 20px;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* Well action dropdown ------ opens at the clicked well's pixel position */
+  .well-menu {
+    position: absolute; z-index: 30;
+    background: rgba(10,14,22,0.96);
+    border: 1px solid rgba(51,216,255,0.30);
+    border-radius: 7px;
+    padding: 4px;
+    min-width: 168px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.65), 0 0 14px rgba(51,216,255,0.12);
+    transform: translate(14px, -50%);
+    opacity: 0; transition: opacity 0.12s ease, transform 0.12s ease;
+    pointer-events: none;
+  }
+  .well-menu.open {
+    opacity: 1; pointer-events: auto;
+    transform: translate(14px, -50%) translateX(0);
+  }
+  .well-menu[hidden] { display: none; }
+  .well-menu .wm-head {
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 6px 10px 4px;
+    border-bottom: 1px solid #14192a;
+    margin-bottom: 4px;
+  }
+  .wm-item {
+    display: flex; align-items: center; gap: 9px;
+    width: 100%; padding: 8px 10px;
+    background: none; border: none; border-radius: 4px;
+    color: var(--text); font: inherit; font-size: 12.5px;
+    cursor: pointer; text-align: left;
+    transition: background 0.12s, color 0.12s;
+  }
+  .wm-item:hover {
+    background: rgba(51,216,255,0.12);
+    color: var(--accent);
+  }
+  .wm-ico { color: var(--accent); flex-shrink: 0; }
+  .wm-item:hover .wm-ico { color: var(--accent); }
+  /* Small triangle pointer on the left edge so the menu reads as
+     anchored to the clicked well column. */
+  .well-menu::before {
+    content: ''; position: absolute;
+    top: 50%; left: -7px; transform: translateY(-50%);
+    border: 7px solid transparent;
+    border-right-color: rgba(51,216,255,0.30);
+  }
+  .well-menu::after {
+    content: ''; position: absolute;
+    top: 50%; left: -6px; transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-right-color: rgba(10,14,22,0.96);
+  }
+
+  /* Hand-off transition. Two phases:
+       .exiting   ------ applied IMMEDIATELY on click. Slow fade for the
+                     left rail + KPI panels so they're already gone by
+                     the time the bar arrives at the top.
+       .handing-off ------ applied late (toward the end of the bar's
+                     motion). Crisp fade for the map canvas + the
+                     remaining top-bar UI, hand-off to underground. */
+  body.exiting #rail,
+  body.exiting #header,
+  body.exiting #legend,
+  body.exiting #group-inspector {
+    opacity: 0; pointer-events: none;
+  }
+  #rail { transition: opacity 0.65s ease; }
+  body.handing-off #map,
+  body.handing-off #rail,
+  body.handing-off #header,
+  body.handing-off #legend,
+  body.handing-off #group-inspector,
+  body.handing-off .maplibregl-ctrl-top-right,
+  body.handing-off .maplibregl-ctrl-top-left,
+  body.handing-off .maplibregl-ctrl-bottom-right,
+  body.handing-off .maplibregl-ctrl-bottom-left {
+    opacity: 0; pointer-events: none;
+  }
+  #rail, #header, #legend, #group-inspector {
+    transition: opacity 0.65s ease;
+  }
+  #map,
+  .maplibregl-ctrl-top-right, .maplibregl-ctrl-top-left,
+  .maplibregl-ctrl-bottom-right, .maplibregl-ctrl-bottom-left {
+    transition: opacity 0.3s ease;
+  }
+
+  #header {
+    position: absolute; top: 16px; left: 16px; z-index: 10;
+    background: rgba(10,13,18,0.78); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px 14px; font-size: 12px;
+    backdrop-filter: blur(6px);
+  }
+  #header .reg { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; }
+  #header .ttl { font-weight: 600; font-size: 14px; margin-top: 2px; }
+  #header .mode { color: var(--muted); font-size: 10.5px; margin-top: 4px; }
+
+  #legend {
+    position: absolute; bottom: 92px; right: 16px; z-index: 10;
+    background: rgba(17,21,28,0.92); border: 1px solid var(--border);
+    border-radius: 6px; padding: 12px 14px; font-size: 11px; min-width: 220px;
+    backdrop-filter: blur(6px);
+  }
+  #legend .title {
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.07em; margin-bottom: 8px; font-size: 10.5px;
+  }
+  #legend .ramp {
+    height: 8px; border-radius: 4px;
+    background: linear-gradient(to right,
+      rgb(1,152,189), rgb(73,227,206), rgb(216,254,181),
+      rgb(254,237,177), rgb(254,173,84), rgb(209,55,78));
+    margin-bottom: 4px;
+  }
+  #legend .scale { display: flex; justify-content: space-between; color: var(--muted); }
+
+  #scrubber {
+    position: absolute; bottom: 0; left: 360px; right: 0; height: 76px;
+    background: rgba(10,13,18,0.92); border-top: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 20px; gap: 16px;
+    backdrop-filter: blur(6px); z-index: 10;
+  }
+  #scrubber button {
+    background: var(--panel-hi); border: 1px solid var(--border);
+    color: var(--text); width: 32px; height: 32px; border-radius: 4px;
+    cursor: pointer; font-size: 12px; padding: 0;
+  }
+  #scrubber button:hover { border-color: var(--accent); }
+  #timeline {
+    flex: 1; position: relative;
+    height: 32px;
+    overflow-x: clip;
+    overflow-y: visible;
+    background: var(--panel-hi);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    cursor: ew-resize;
+    user-select: none;
+  }
+  .tl-inner { position: relative; height: 100%; width: 100%; }
+  #markers-track { position: absolute; inset: 0; }
+  .tl-marker {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 8px; height: 8px; border-radius: 50%;
+    cursor: pointer; box-shadow: 0 0 0 2px rgba(0,0,0,0.55);
+  }
+  .tl-marker.failure  { background: var(--bad); }
+  .tl-marker.workover { background: var(--good); }
+  .tl-marker.weather  { background: #59a8d8; }
+  .tl-marker.anomaly  { background: var(--warn); }
+  .tl-marker .tip {
+    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    background: var(--panel-hi); border: 1px solid var(--border);
+    padding: 6px 9px; border-radius: 4px; font-size: 11px;
+    color: var(--text); white-space: nowrap;
+    opacity: 0; transition: opacity 0.12s; pointer-events: none;
+    z-index: 30;
+  }
+  .tl-marker:hover .tip { opacity: 1; }
+  .tl-marker .tip-title { font-weight: 600; }
+  .tl-marker .tip-detail { color: var(--muted); font-size: 10.5px; margin-top: 2px; }
+  .tl-marker .tip-day { color: var(--muted); font-size: 10px; margin-top: 2px; }
+  #playhead {
+    position: absolute; top: -4px; bottom: -4px; width: 2px;
+    background: var(--accent); pointer-events: none;
+    box-shadow: 0 0 8px var(--accent);
+  }
+  #day-readout { color: var(--text); font-size: 12px; font-feature-settings: 'tnum'; min-width: 130px; text-align: right; }
+
+  /* Group inspector flyout */
+  #group-inspector {
+    position: absolute; top: 110px; left: 380px; width: 380px;
+    max-height: calc(100vh - 200px);
+    background: rgba(10,13,18,0.94); border: 1px solid var(--border);
+    border-radius: 8px; padding: 18px 20px; z-index: 25;
+    backdrop-filter: blur(10px);
+    overflow-y: auto;
+    box-shadow: 0 20px 56px rgba(0,0,0,0.55);
+    display: none;
+  }
+  #group-inspector.open { display: block; }
+  #group-inspector .gi-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+  }
+  #group-inspector h2 { font-size: 14px; font-weight: 600; margin: 0; }
+  #gi-close {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 18px; padding: 0; line-height: 1;
+  }
+  #gi-close:hover { color: var(--text); }
+  .gi-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .gi-stat { border: 1px solid var(--border); border-radius: 5px; padding: 9px 11px; background: var(--panel); }
+  .gi-stat .lbl { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .gi-stat .val { font-size: 16px; margin-top: 3px; font-weight: 600; }
+  .gi-stat .val .unit { font-size: 10.5px; color: var(--muted); font-weight: 400; }
+
+  /* Well detail panel ------ opens when a single well is selected from the rail */
+  #well-detail-panel {
+    position: absolute; top: 24px; left: 380px; width: 360px;
+    max-height: calc(100vh - 110px);
+    background: rgba(10,13,18,0.94); border: 1px solid var(--border);
+    border-radius: 8px; padding: 18px 20px; z-index: 24;
+    backdrop-filter: blur(10px);
+    overflow-y: auto;
+    box-shadow: 0 20px 56px rgba(0,0,0,0.55);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity 0.22s ease, visibility 0.22s;
+  }
+  #well-detail-panel.open {
+    opacity: 1; visibility: visible; pointer-events: auto;
+  }
+  #well-detail-panel .wd-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 10px; gap: 10px;
+  }
+  #well-detail-panel .wd-eyebrow {
+    font-size: 10px; color: var(--accent); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 4px;
+  }
+  #well-detail-panel h2 { font-size: 15px; font-weight: 600; margin: 0; }
+  #well-detail-panel .wd-meta { font-size: 11.5px; color: var(--muted); margin-bottom: 14px; }
+  #wd-close {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 20px; padding: 0; line-height: 1; flex-shrink: 0;
+  }
+  #wd-close:hover { color: var(--text); }
+  .wd-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    margin-bottom: 14px;
+  }
+  .wd-stat {
+    border: 1px solid var(--border); border-radius: 5px;
+    padding: 10px 12px; background: var(--panel);
+  }
+  .wd-stat .lbl {
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .wd-stat .val {
+    font-size: 16px; margin-top: 4px; font-weight: 600;
+    font-feature-settings: 'tnum';
+  }
+  .wd-stat .val.bad { color: var(--bad); }
+  .wd-stat .val.warn { color: var(--warn); }
+  .wd-stat .val.good { color: var(--good); }
+  .wd-anomaly {
+    padding: 12px; border: 1px solid var(--border); border-radius: 5px;
+    background: var(--panel);
+  }
+  .wd-anomaly .lbl {
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .wd-anomaly .lbl .val {
+    color: var(--text); font-weight: 600; font-size: 13px;
+    text-transform: none; letter-spacing: 0;
+  }
+  .wd-anomaly .bar {
+    margin-top: 8px; height: 6px; background: var(--panel-hi);
+    border-radius: 3px; overflow: hidden;
+  }
+  .wd-anomaly .bar .fill {
+    height: 100%; transition: width 0.2s ease, background 0.2s ease;
+  }
+  #well-detail-panel .wd-action {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 12px;
+    background: rgba(20,28,45,0.85); border: 1px solid #2a3548;
+    color: var(--text); font-family: inherit;
+    padding: 7px 13px 7px 9px; border-radius: 6px;
+    font-size: 12px; cursor: pointer;
+  }
+  #well-detail-panel .wd-action:hover { border-color: var(--accent); background: rgba(40,55,85,0.85); }
+
+  .gi-related { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .gi-chip {
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 4px 10px; font-size: 11px; color: var(--muted); cursor: pointer;
+    transition: border-color 0.12s, color 0.12s;
+  }
+  .gi-chip:hover { color: var(--text); border-color: #2a3548; }
+  .gi-chip.active { background: rgba(51,216,255,0.1); border-color: rgba(51,216,255,0.4); color: var(--accent); }
+
+  .gi-summary { font-size: 12px; color: var(--text); margin-top: 18px; line-height: 1.55; }
+  .gi-summary ul { margin: 0; padding-left: 18px; }
+  .gi-summary li { margin-bottom: 4px; }
+
+  .gi-wells-label { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .gi-wells .well-row {
+    border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px;
+    margin-bottom: 6px; cursor: pointer; transition: border-color 0.12s, background 0.12s;
+    background: var(--panel);
+  }
+  .gi-wells .well-row:hover { border-color: #2a3548; }
+  .gi-wells .well-row.alert { border-color: rgba(214,51,78,0.55); background: linear-gradient(180deg, rgba(80,18,28,0.32), rgba(40,10,16,0.18)); }
+  .well-row-id { display: flex; justify-content: space-between; align-items: center; }
+  .well-row-id span:first-child { font-weight: 600; font-size: 12px; }
+  .well-row-id .alert-tag { color: var(--bad); font-size: 11px; }
+  .well-row-id .ok-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); display: inline-block; }
+  .well-row-stats { display: flex; gap: 12px; font-size: 11px; color: var(--muted); margin-top: 4px; flex-wrap: wrap; }
+  .well-row-stats b { color: var(--text); font-feature-settings: 'tnum'; }
+  .well-row-stats b.down { color: var(--bad); }
+  .well-row-insight { margin-top: 8px; padding: 8px 10px; background: rgba(214,51,78,0.08); border-left: 2px solid var(--bad); border-radius: 0 4px 4px 0; }
+  .well-row-insight .ttl { font-size: 11.5px; font-weight: 600; }
+  .well-row-insight .txt { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ============================================================
+     DRILLING SCENE ------ 3D directional command center overlay.
+     Sits BEHIND the map (z:5) until the hand-off; promoted to
+     z:100 once the crossfade completes. */
+  #drilling-scene {
+    position: fixed; inset: 0; z-index: 5;
+    background: #03060d;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.16s ease;
+  }
+  #drilling-scene.crossfading { opacity: 1; }
+  #drilling-scene.open {
+    opacity: 1; z-index: 100; pointer-events: auto;
+  }
+  #drilling-canvas-wrap {
+    position: absolute;
+    top: 64px; bottom: 220px; left: 64px; right: 320px;
+    overflow: hidden;
+    background: #04070f;
+    border: 1px solid #1a2030;
+    border-radius: 4px;
+  }
+  #drilling-canvas-wrap canvas { display: block; width: 100%; height: 100%; }
+
+  #drilling-top-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 64px;
+    z-index: 10;
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 20px;
+    background: linear-gradient(180deg, rgba(6,9,18,0.92), rgba(6,9,18,0.55));
+    border-bottom: 1px solid #14192a;
+  }
+  #drilling-back {
+    background: rgba(20,28,45,0.85); border: 1px solid #2a3548;
+    color: var(--text); font-family: inherit;
+    padding: 7px 13px 7px 9px; border-radius: 6px;
+    font-size: 12px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  #drilling-back:hover { border-color: var(--accent); background: rgba(40,55,85,0.85); }
+  #drilling-back .arrow { font-size: 14px; line-height: 1; }
+  .dt-title-block { display: flex; flex-direction: column; gap: 1px; min-width: 230px; }
+  .dt-eyebrow { font-size: 9.5px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; }
+  .dt-title   { font-size: 14px; font-weight: 600; letter-spacing: 0.01em; }
+  .dt-meta    { font-size: 10.5px; color: var(--muted); }
+
+  #dt-alerts-row { display: flex; gap: 8px; margin-left: 20px; }
+  .dt-alert-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border-radius: 14px;
+    font-size: 11px; border: 1px solid transparent;
+  }
+  .dt-alert-chip.critical { background: rgba(214,51,78,0.16); border-color: rgba(214,51,78,0.55); color: var(--bad); }
+  .dt-alert-chip.warn { background: rgba(240,177,78,0.14); border-color: rgba(240,177,78,0.45); color: var(--warn); }
+  .dt-alert-chip .icon { font-size: 12px; line-height: 1; }
+  /* Pulsing alert chip ------ used for the live Pressure Spike indicator */
+  @keyframes dt-chip-pulse {
+    0%   { box-shadow: 0 0 0 0   rgba(240,177,78,0.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(240,177,78,0);    }
+    100% { box-shadow: 0 0 0 0   rgba(240,177,78,0);    }
+  }
+  .dt-alert-chip.pulse { animation: dt-chip-pulse 1.6s ease-in-out infinite; }
+  .dt-alert-chip.pulse .icon {
+    display: inline-block;
+    animation: dt-chip-pulse-dot 1.6s ease-in-out infinite;
+  }
+  @keyframes dt-chip-pulse-dot {
+    0%, 100% { transform: scale(1);   opacity: 1; }
+    50%      { transform: scale(1.3); opacity: 0.65; }
+  }
+
+  #dt-status-pill {
+    margin-left: auto;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 12px; background: rgba(63,185,80,0.12);
+    border: 1px solid rgba(63,185,80,0.45); color: var(--good);
+    border-radius: 14px; font-size: 11px;
+  }
+  #dt-status-pill .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--good);
+    box-shadow: 0 0 6px var(--good);
+  }
+
+  /* Axes + stratum labels (HTML overlay over the 3D canvas) */
+  #dt-tvd-axis, #dt-distance-axis, #dt-stratum-labels {
+    position: absolute; pointer-events: none; z-index: 8;
+    transition: opacity 0.18s ease;
+  }
+  #dt-tvd-axis { top: 64px; bottom: 220px; left: 0; width: 64px; }
+  #dt-tvd-axis .dt-axis-title {
+    position: absolute; top: 8px; left: 12px;
+    font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  #dt-tvd-axis .dt-axis-tick {
+    position: absolute; right: 8px; font-size: 10px; color: var(--muted);
+    font-feature-settings: 'tnum';
+  }
+  #dt-distance-axis {
+    bottom: 200px; left: 64px; right: 320px; height: 24px;
+  }
+  #dt-distance-axis .dt-axis-tick {
+    position: absolute; top: 0; transform: translateX(-50%);
+    font-size: 10px; color: var(--muted); font-feature-settings: 'tnum';
+  }
+  #dt-stratum-labels { top: 64px; bottom: 220px; left: 64px; width: 130px; }
+  .dt-stratum-label {
+    position: absolute; left: 4px;
+    font-size: 10px; color: var(--c); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    text-shadow: 0 0 4px rgba(0,0,0,0.85);
+  }
+  .dt-stratum-label.dashed::before {
+    content: ''; display: inline-block; width: 14px; height: 1px;
+    border-top: 1px dashed var(--c); margin-right: 6px; vertical-align: middle;
+  }
+
+  /* 3D nav controls */
+  #dt-nav-controls {
+    position: absolute; right: 340px; top: 76px; z-index: 8;
+    display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
+  }
+  #dt-reset-view {
+    background: rgba(20,28,45,0.85); border: 1px solid #2a3548;
+    color: var(--text); padding: 6px 12px; border-radius: 5px;
+    font-size: 11px; cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  #dt-reset-view:hover { border-color: var(--accent); }
+  #dt-orbit-hint { font-size: 10px; color: var(--muted); }
+
+  #dt-gizmo {
+    position: absolute; top: 76px; right: 340px; width: 80px; height: 80px;
+    pointer-events: none; z-index: 7; opacity: 0; transition: opacity 0.2s;
+  }
+  #drilling-scene.orbiting #dt-gizmo { opacity: 0.85; }
+  #drilling-scene.orbiting #dt-tvd-axis,
+  #drilling-scene.orbiting #dt-distance-axis,
+  #drilling-scene.orbiting #dt-stratum-labels { opacity: 0; }
+
+  #dt-offset-labels {
+    position: absolute; top: 64px; bottom: 220px; left: 64px; right: 320px;
+    pointer-events: none; z-index: 7;
+  }
+  .dt-offset-label {
+    position: absolute; font-size: 10px; color: var(--muted);
+    background: rgba(8,11,16,0.8); padding: 4px 7px; border-radius: 3px;
+    border: 1px solid #1a2030; line-height: 1.3;
+  }
+  .dt-offset-label span { color: var(--text); font-weight: 500; }
+  /* Pressure-spike call-out ------ projected from a 3D point each frame.
+     Rendered as a "pin": the flag floats high above the spike marker,
+     connected by a thin vertical stem with a small dot at the foot. */
+  .dt-spike-flag {
+    position: absolute; pointer-events: none;
+    background: rgba(40,28,15,0.94);
+    border: 1px solid rgba(240,177,78,0.55);
+    border-radius: 4px; padding: 7px 12px;
+    font-size: 11px; color: var(--text);
+    white-space: nowrap;
+    /* Push the flag well above the marker (110px stem + own height) */
+    transform: translate(-50%, calc(-100% - 110px));
+    box-shadow: 0 0 14px rgba(240,177,78,0.35), 0 6px 18px rgba(0,0,0,0.65);
+    display: none;
+    line-height: 1.3;
+  }
+  .dt-spike-flag.visible { display: block; }
+  .dt-spike-flag .ttl {
+    display: block; font-size: 9.5px; color: var(--warn);
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 2px;
+  }
+  .dt-spike-flag .val {
+    font-feature-settings: 'tnum'; font-weight: 500;
+    color: var(--text);
+  }
+  /* Stem ------ a thin amber line dropping from the flag down to the marker */
+  .dt-spike-flag::after {
+    content: ''; position: absolute;
+    left: 50%; top: 100%;
+    width: 1.5px; height: 110px;
+    background: linear-gradient(180deg,
+      rgba(240,177,78,0.75) 0%,
+      rgba(240,177,78,0.35) 70%,
+      rgba(240,177,78,0.0)  100%);
+    transform: translateX(-50%);
+    box-shadow: 0 0 6px rgba(240,177,78,0.45);
+  }
+  /* Tiny dot at the foot of the stem, anchoring it to the marker */
+  .dt-spike-flag::before {
+    content: ''; position: absolute;
+    left: 50%; top: calc(100% + 110px);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(240,177,78,0.9);
+    box-shadow: 0 0 8px rgba(240,177,78,0.85);
+    transform: translate(-50%, -50%);
+  }
+
+  /* Bit info card (right side) */
+  #dt-bit-card {
+    position: absolute; top: 84px; right: 20px; width: 300px;
+    background: rgba(10,14,22,0.92); border: 1px solid #1a2030;
+    border-radius: 6px; padding: 16px; z-index: 9;
+    opacity: 0; transition: opacity 0.4s ease 0.2s;
+  }
+  #drilling-scene.entered #dt-bit-card { opacity: 1; }
+  #dt-bit-card .lbl { font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  #dt-bit-card .val { font-size: 18px; font-weight: 600; margin-top: 3px; }
+  #dt-bit-card .row { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid #1a2030; }
+  #dt-bit-card .row .col { flex: 1; }
+
+  /* Bottom panel inside drilling scene (analytics row) */
+  #dt-bottom-panel {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+    background: linear-gradient(0deg, rgba(8,11,16,0.95), rgba(8,11,16,0.65));
+    border-top: 1px solid #14192a; padding: 14px 24px;
+    z-index: 8; display: flex; gap: 24px;
+    opacity: 0; transition: opacity 0.4s ease 0.3s;
+  }
+  #drilling-scene.entered #dt-bottom-panel { opacity: 1; }
+  .dt-panel-block { flex: 1; }
+  .dt-panel-block .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .dt-panel-block .val { font-size: 22px; font-weight: 600; }
+  .dt-panel-block .sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .dt-panel-block .val.bad { color: var(--bad); }
+  .dt-panel-block .val.warn { color: var(--warn); }
+  .dt-panel-block .val.good { color: var(--good); }
+  /* Pore-pressure sparkline + spike chip */
+  .dt-pp-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 2px;
+  }
+  .dt-spark { display: block; flex-shrink: 0; }
+  .dt-spark-pulse {
+    transform-origin: 110px 2px; transform-box: fill-box;
+    animation: dt-spark-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes dt-spark-pulse {
+    0%, 100% { opacity: 1; r: 3; filter: drop-shadow(0 0 4px rgba(240,177,78,0.9)); }
+    50%      { opacity: 0.6; r: 4.5; filter: drop-shadow(0 0 8px rgba(240,177,78,0.7)); }
+  }
+  .dt-spike-chip {
+    display: inline-block;
+    background: rgba(240,177,78,0.18);
+    border: 1px solid rgba(240,177,78,0.45);
+    color: var(--warn); font-weight: 600;
+    padding: 1px 6px; border-radius: 3px;
+    font-size: 10.5px; letter-spacing: 0.02em;
+    margin-right: 4px;
+  }
+
+  /* ============================================================
+     WELL LOG CORRELATION MODAL ------ sample case study (AASTRA Discovery)
+     ============================================================ */
+  #wlc-trigger {
+    width: 100%; margin: 6px 0 4px;
+    background: linear-gradient(180deg, rgba(20,30,46,0.85), rgba(12,18,28,0.85));
+    border: 1px solid rgba(51,216,255,0.30);
+    color: var(--text);
+    border-radius: 8px; padding: 14px 14px 14px 12px;
+    font-family: inherit; cursor: pointer;
+    display: flex; align-items: center; gap: 12px; text-align: left;
+    box-shadow: 0 0 0 0 rgba(51,216,255,0);
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  #wlc-trigger:hover {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, rgba(30,46,70,0.92), rgba(18,28,42,0.92));
+    box-shadow: 0 0 22px rgba(51,216,255,0.18);
+    transform: translateY(-1px);
+  }
+  #wlc-trigger .icon {
+    width: 38px; height: 38px; border-radius: 8px; flex-shrink: 0;
+    background: linear-gradient(180deg, rgba(51,216,255,0.14), rgba(51,216,255,0.04));
+    border: 1px solid rgba(51,216,255,0.40);
+    color: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  #wlc-trigger:hover .icon {
+    background: linear-gradient(180deg, rgba(51,216,255,0.22), rgba(51,216,255,0.08));
+    border-color: rgba(51,216,255,0.65);
+  }
+  #wlc-trigger .lbl-blk { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+  #wlc-trigger .lbl { font-weight: 600; font-size: 13px; line-height: 1.2; color: var(--text); }
+  #wlc-trigger .sub { font-size: 11px; color: var(--muted); }
+  #wlc-trigger .chev {
+    color: var(--muted); font-size: 14px; line-height: 1;
+    flex-shrink: 0; transition: transform 0.15s, color 0.15s;
+  }
+  #wlc-trigger:hover .chev { color: var(--accent); transform: translateX(2px); }
+
+  #wlc-modal {
+    position: fixed; inset: 0; z-index: 200;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(2,4,8,0.62); backdrop-filter: blur(6px);
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  #wlc-modal.open { display: flex; opacity: 1; }
+  .wlc-shell {
+    width: 90vw; height: 82vh;
+    background: linear-gradient(180deg, #0c1019 0%, #0a0d14 100%);
+    border: 1px solid #1a2030; border-radius: 8px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(51,216,255,0.04);
+    display: grid; grid-template-rows: 56px 1fr 42px;
+    overflow: hidden;
+    transform: scale(0.985); transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;
+  }
+  #wlc-modal.open .wlc-shell { transform: scale(1); }
+  #wlc-modal.expanded .wlc-shell { width: 96vw; height: 94vh; }
+
+  .wlc-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 0 18px; border-bottom: 1px solid #14192a;
+    background: linear-gradient(180deg, rgba(13,18,28,0.95), rgba(10,14,22,0.85));
+  }
+  .wlc-eyebrow {
+    font-size: 10.5px; color: var(--accent); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.16em;
+  }
+  .wlc-title { font-size: 18px; font-weight: 600; letter-spacing: 0.01em; }
+  .wlc-meta { font-size: 11.5px; color: var(--muted); }
+  .wlc-title-block { display: flex; flex-direction: column; gap: 8px; }
+  .wlc-title-row { display: flex; align-items: baseline; gap: 12px; }
+  .wlc-toggles { display: flex; gap: 6px; margin-left: 22px; }
+  .wlc-toggle {
+    background: rgba(20,28,45,0.55); border: 1px solid #1a2030;
+    color: var(--muted); padding: 5px 10px; border-radius: 4px;
+    font-size: 10.5px; cursor: pointer; font-family: inherit;
+    letter-spacing: 0.04em; font-weight: 500;
+    transition: border-color 0.12s, color 0.12s, background 0.12s;
+  }
+  .wlc-toggle:hover:not(.disabled) { color: var(--text); border-color: #2a3548; }
+  .wlc-toggle.on {
+    color: var(--accent); border-color: rgba(51,216,255,0.45);
+    background: rgba(51,216,255,0.07);
+  }
+  .wlc-toggle.disabled { opacity: 0.4; cursor: not-allowed; }
+  .wlc-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .wlc-cta {
+    background: linear-gradient(180deg, rgba(51,216,255,0.18), rgba(51,216,255,0.08));
+    border: 1px solid rgba(51,216,255,0.45); color: var(--accent);
+    padding: 7px 13px; font-size: 11.5px; border-radius: 5px;
+    cursor: pointer; font-family: inherit; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: background 0.12s, box-shadow 0.12s;
+  }
+  .wlc-cta:hover { background: rgba(51,216,255,0.24); box-shadow: 0 0 14px rgba(51,216,255,0.28); }
+  .wlc-icon-btn {
+    background: rgba(20,28,45,0.55); border: 1px solid #1a2030;
+    color: var(--muted); width: 30px; height: 30px; border-radius: 5px;
+    cursor: pointer; font-family: inherit; font-size: 16px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: border-color 0.12s, color 0.12s; padding: 0;
+  }
+  .wlc-icon-btn:hover { color: var(--text); border-color: #2a3548; }
+
+  .wlc-body {
+    display: grid; grid-template-columns: 70% 30%;
+    min-height: 0;
+  }
+  .wlc-left, .wlc-right { min-height: 0; min-width: 0; }
+  .wlc-left {
+    border-right: 1px solid #14192a;
+    display: flex; flex-direction: column;
+  }
+  .wlc-right {
+    display: grid; grid-template-rows: minmax(0, 1fr) auto;
+    overflow: hidden;
+  }
+
+  .wlc-tracks-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 22px 4px; font-size: 11.5px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .wlc-tracks-head .lhs { display: flex; gap: 14px; align-items: baseline; }
+  .wlc-tracks-head .scale-marker { color: var(--text); font-feature-settings: 'tnum'; }
+
+  /* View switching inside .wlc-left: tracks (default) vs knowledge graph */
+  .wlc-left-view {
+    display: none;
+    flex: 1; min-height: 0; min-width: 0;
+    flex-direction: column;
+  }
+  .wlc-tracks-view { display: flex; }
+  .wlc-graph-view  { display: none; }
+  #wlc-modal.graph-mode .wlc-tracks-view { display: none; }
+  #wlc-modal.graph-mode .wlc-graph-view  { display: flex; }
+  /* While in graph mode the GR/FM TOPS toggles + Sync to 3D button are
+     irrelevant; dim them so the user reads the back button as the way out. */
+  #wlc-modal.graph-mode .wlc-toggles { opacity: 0.35; pointer-events: none; }
+
+  .wlc-graph-head {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 18px 8px;
+  }
+  .wlc-graph-head .title-block { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .wlc-graph-head .eyebrow {
+    font-size: 9px; color: var(--accent); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.14em;
+  }
+  .wlc-graph-head .ttl { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.15; }
+  .wlc-graph-head .stats {
+    margin-left: auto; font-size: 10.5px; color: var(--muted);
+    display: flex; gap: 16px;
+  }
+  .wlc-graph-head .stats b {
+    color: var(--text); font-feature-settings: 'tnum'; font-weight: 500;
+    margin-right: 3px;
+  }
+  .wlc-back-btn {
+    background: linear-gradient(180deg, rgba(51,216,255,0.16), rgba(51,216,255,0.05));
+    border: 1px solid rgba(51,216,255,0.45); color: var(--accent);
+    padding: 6px 12px 6px 9px; border-radius: 5px;
+    font-size: 11.5px; cursor: pointer; font-family: inherit; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background 0.12s, box-shadow 0.12s;
+    flex-shrink: 0;
+  }
+  .wlc-back-btn:hover {
+    background: rgba(51,216,255,0.24);
+    box-shadow: 0 0 14px rgba(51,216,255,0.28);
+  }
+  .wlc-back-btn .arrow { font-size: 13px; line-height: 1; }
+
+  .wlc-graph-svg-wrap {
+    position: relative; flex: 1; min-height: 0; min-width: 0;
+    overflow: hidden;
+    background: radial-gradient(800px 500px at 50% 50%, rgba(51,216,255,0.04), transparent 60%);
+  }
+  .wlc-graph-svg-wrap > #kg-svg {
+    display: block; width: 100%; height: 100%; cursor: grab;
+  }
+  .wlc-graph-svg-wrap > #kg-svg:active { cursor: grabbing; }
+  .wlc-svg-wrap {
+    flex: 1; min-height: 0; padding: 4px 18px 14px;
+    overflow: hidden; position: relative;
+  }
+  .wlc-svg-wrap svg { display: block; width: 100%; height: 100%; }
+
+  .wlc-svg .track-frame { fill: rgba(8,11,16,0.55); stroke: #14192a; stroke-width: 1; }
+  .wlc-svg .grid-line { stroke: rgba(120,150,200,0.07); stroke-width: 1; }
+  .wlc-svg .axis-tick { fill: var(--muted); font-size: 11px; font-feature-settings: 'tnum'; }
+  .wlc-svg .axis-title { fill: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .wlc-svg .well-name { fill: var(--text); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; }
+  .wlc-svg .well-sub { fill: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .wlc-svg .gr-curve {
+    fill: none; stroke: #2AE66B; stroke-width: 1.3; stroke-linejoin: round;
+    filter: url(#wlc-glow-green);
+  }
+  .wlc-svg .gr-band { stroke: none; }
+  .wlc-svg .formation-line {
+    stroke-width: 1.3; opacity: 0.85; pointer-events: none;
+    transition: opacity 0.15s, stroke-width 0.15s;
+  }
+  .wlc-svg .formation-line.dim { opacity: 0.16; }
+  .wlc-svg .formation-line.active { opacity: 1; stroke-width: 2; }
+  .wlc-svg .formation-line.dashed { stroke-dasharray: 5 4; }
+  .wlc-svg .formation-hit, .wlc-svg .corr-hit {
+    cursor: pointer;
+  }
+  .wlc-svg .formation-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    pointer-events: none;
+  }
+  .wlc-svg .corr-line {
+    stroke-width: 1.1; opacity: 0.5; fill: none; pointer-events: none;
+    transition: opacity 0.15s, stroke-width 0.15s;
+  }
+  .wlc-svg .corr-line.dim { opacity: 0.1; }
+  .wlc-svg .corr-line.active { opacity: 0.95; stroke-width: 1.8; }
+  .wlc-svg .corr-line.dashed { stroke-dasharray: 5 4; }
+  .wlc-svg .formation-line[data-fm="jamieson-te2-fm"].active,
+  .wlc-svg .corr-line[data-fm="jamieson-te2-fm"].active {
+    filter: drop-shadow(0 0 4px rgba(59,130,246,0.85));
+  }
+  .wlc-svg .formation-line[data-fm="plover-fm-top"].active,
+  .wlc-svg .corr-line[data-fm="plover-fm-top"].active,
+  .wlc-svg .formation-line[data-fm="plover-fm-sand"].active,
+  .wlc-svg .corr-line[data-fm="plover-fm-sand"].active {
+    filter: drop-shadow(0 0 4px rgba(34,197,94,0.75));
+  }
+  .wlc-svg .formation-line[data-fm="plover-fm-base"].active,
+  .wlc-svg .corr-line[data-fm="plover-fm-base"].active {
+    filter: drop-shadow(0 0 5px rgba(249,115,22,0.85));
+  }
+  .wlc-svg .litho-block { stroke: rgba(255,255,255,0.04); stroke-width: 0.5; }
+  .wlc-svg .depth-rule {
+    stroke: rgba(51,216,255,0); stroke-width: 1.2; pointer-events: none;
+    transition: stroke 0.12s;
+  }
+  .wlc-svg .depth-rule.active { stroke: rgba(51,216,255,0.7); filter: drop-shadow(0 0 4px rgba(51,216,255,0.6)); }
+
+  .wlc-panel {
+    border-bottom: 1px solid #14192a;
+    padding: 13px 16px;
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  .wlc-panel:last-child { border-bottom: none; }
+  .wlc-panel-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 4px; gap: 10px;
+  }
+  .wlc-panel-head .ttl {
+    font-size: 12px; color: var(--text); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .wlc-panel-head .sub { font-size: 11px; color: var(--muted); }
+
+  #wlc-xp-svg-wrap { flex: 1; min-height: 0; }
+  #wlc-xp-svg-wrap svg { display: block; width: 100%; height: 100%; }
+  .wlc-xp .xp-frame { fill: rgba(8,11,16,0.5); stroke: #14192a; }
+  .wlc-xp .xp-grid { stroke: rgba(120,150,200,0.07); stroke-width: 1; }
+  .wlc-xp .xp-tick { fill: var(--muted); font-size: 11px; font-feature-settings: 'tnum'; }
+  .wlc-xp .xp-axis-title { fill: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .wlc-xp .xp-point { cursor: crosshair; transition: opacity 0.12s; }
+  .wlc-xp .xp-point.hovered {
+    stroke: var(--accent); stroke-width: 1.4;
+    filter: drop-shadow(0 0 4px rgba(51,216,255,0.7));
+  }
+  .wlc-xp .xp-point.dim { opacity: 0.42; }
+  /* Dense (background) sample cloud + brush selection */
+  .wlc-xp .xp-dense-pt { transition: opacity 0.12s; cursor: crosshair; }
+  .wlc-xp .xp-dense-pt.hovered {
+    stroke: rgba(255,255,255,0.8); stroke-width: 0.7;
+    filter: drop-shadow(0 0 3px rgba(255,255,255,0.55));
+  }
+  .wlc-xp .xp-dense-pt.dim-by-brush { opacity: 0.10; }
+  .wlc-xp .xp-point.dim-by-brush { opacity: 0.18; }
+  .wlc-xp .xp-dense-pt.in-brush,
+  .wlc-xp .xp-point.in-brush { opacity: 1; }
+  .wlc-xp .xp-point.xp-featured {
+    stroke: rgba(255,255,255,0.65); stroke-width: 0.9;
+  }
+  .wlc-xp .xp-brush {
+    fill: rgba(51,216,255,0.08);
+    stroke: rgba(51,216,255,0.7);
+    stroke-width: 1; stroke-dasharray: 3 3;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px rgba(51,216,255,0.18));
+  }
+  .wlc-xp.mode-featured .xp-dense-g { display: none; }
+
+  .wlc-xp-modes { display: inline-flex; gap: 4px; }
+  .xp-mode-btn {
+    background: rgba(20,28,45,0.55); border: 1px solid #1a2030;
+    color: var(--muted); padding: 3px 9px; border-radius: 4px;
+    font-size: 10px; cursor: pointer; font-family: inherit;
+    letter-spacing: 0.04em;
+    transition: border-color 0.12s, color 0.12s, background 0.12s;
+  }
+  .xp-mode-btn:hover { color: var(--text); border-color: #2a3548; }
+  .xp-mode-btn.active {
+    color: var(--accent); border-color: rgba(51,216,255,0.45);
+    background: rgba(51,216,255,0.07);
+  }
+
+  .wlc-xp-status {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 2px 0; font-size: 10.5px; color: var(--muted);
+    min-height: 22px;
+  }
+  .wlc-xp-status .hint { font-style: italic; }
+  .wlc-xp-status .sel { color: var(--text); font-feature-settings: 'tnum'; }
+  .wlc-xp-status .sel b { color: var(--accent); font-weight: 600; margin-right: 3px; }
+  .xp-reset-btn {
+    background: rgba(20,28,45,0.55); border: 1px solid #1a2030;
+    color: var(--muted); padding: 2px 8px; border-radius: 3px;
+    font-size: 10px; cursor: pointer; font-family: inherit;
+    margin-left: auto;
+    transition: border-color 0.12s, color 0.12s;
+  }
+  .xp-reset-btn:hover { color: var(--text); border-color: #2a3548; }
+
+  .wlc-sample-grid, .wlc-meta-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px;
+    margin-top: 10px;
+  }
+  .wlc-sample-grid .key, .wlc-meta-grid .key {
+    font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em;
+  }
+  .wlc-sample-grid .val, .wlc-meta-grid .val {
+    font-size: 13px; color: var(--text); font-feature-settings: 'tnum';
+  }
+  #wlc-sample-empty {
+    font-size: 11px; color: var(--muted); font-style: italic;
+    padding: 4px 0 8px;
+  }
+
+  .wlc-footer {
+    border-top: 1px solid #14192a; padding: 0 18px;
+    display: flex; align-items: center; gap: 18px;
+    font-size: 12px; color: var(--muted);
+    background: rgba(8,11,16,0.6);
+    overflow-x: auto; white-space: nowrap;
+  }
+  .wlc-leg-row { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .wlc-leg-row .swatch {
+    width: 14px; height: 2px; border-radius: 1px; display: inline-block;
+  }
+  .wlc-leg-row .swatch.dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .wlc-leg-row .swatch.dashed {
+    background: none; height: 0;
+    border-top: 1.5px dashed currentColor;
+  }
+  .wlc-leg-row .label { color: var(--text); }
+  .wlc-leg-divider { width: 1px; height: 18px; background: #14192a; flex-shrink: 0; }
+
+  #wlc-tooltip {
+    position: fixed; pointer-events: none; z-index: 250;
+    background: rgba(10,14,22,0.95); border: 1px solid #2a3548;
+    border-radius: 5px; padding: 8px 11px; font-size: 11px;
+    color: var(--text); display: none; min-width: 160px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  }
+  #wlc-tooltip .head { font-weight: 600; margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid #1a2030; }
+  #wlc-tooltip .row { display: flex; justify-content: space-between; gap: 14px; line-height: 1.55; }
+  #wlc-tooltip .row .key { color: var(--muted); }
+  #wlc-tooltip .row .val { font-feature-settings: 'tnum'; color: var(--text); }
+
+  /* Cross-plot points are clickable (open the knowledge-graph modal) */
+  .wlc-xp .xp-point { cursor: pointer; }
+
+  /* ============================================================
+     KNOWLEDGE GRAPH MODAL ------ cognee-style synthetic graph.
+     Opens when a cross-plot point is clicked.
+     ============================================================ */
+  #kg-modal {
+    position: fixed; inset: 0; z-index: 220;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(2,4,8,0.74); backdrop-filter: blur(8px);
+    opacity: 0; transition: opacity 0.22s ease;
+  }
+  #kg-modal.open { display: flex; opacity: 1; }
+  .kg-shell {
+    width: 92vw; height: 88vh;
+    background: #050810;
+    border: 1px solid #1a2030; border-radius: 8px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.75);
+    display: grid; grid-template-rows: 56px 1fr 36px;
+    overflow: hidden; position: relative;
+    transform: scale(0.985); transition: transform 0.22s ease;
+  }
+  #kg-modal.open .kg-shell { transform: scale(1); }
+  .kg-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 0 18px; border-bottom: 1px solid #14192a;
+    background: linear-gradient(180deg, rgba(13,18,28,0.95), rgba(8,11,18,0.85));
+  }
+  .kg-eyebrow {
+    font-size: 9.5px; color: var(--accent); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.14em;
+  }
+  .kg-title { font-size: 14px; font-weight: 600; }
+  .kg-meta { font-size: 10.5px; color: var(--muted); }
+  .kg-title-block { display: flex; flex-direction: column; gap: 2px; }
+  .kg-title-row { display: flex; align-items: baseline; gap: 10px; }
+  .kg-tag-line {
+    margin-left: auto; font-size: 11px; color: var(--muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .kg-tag-line .pulse {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+    animation: kg-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes kg-pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%     { opacity: 0.45; transform: scale(0.7); }
+  }
+  .kg-actions { display: flex; gap: 8px; }
+
+  .kg-body {
+    position: relative; min-height: 0; min-width: 0;
+    background:
+      radial-gradient(1200px 700px at 50% 50%, rgba(51,216,255,0.04), transparent 60%),
+      #050810;
+  }
+  #kg-svg { display: block; width: 100%; height: 100%; cursor: grab; }
+  #kg-svg:active { cursor: grabbing; }
+  #kg-svg .kg-edge { stroke: rgba(220,225,240,0.16); stroke-width: 0.7; fill: none; transition: stroke 0.12s, stroke-width 0.12s; }
+  #kg-svg .kg-edge.dim { stroke: rgba(220,225,240,0.04); }
+  #kg-svg .kg-edge.lit { stroke: rgba(255,255,255,0.6); stroke-width: 1.1; }
+  #kg-svg .kg-node-group { cursor: pointer; }
+  #kg-svg .kg-node-circle {
+    stroke-width: 0;
+    transition: stroke-width 0.12s, filter 0.12s;
+  }
+  #kg-svg .kg-node-circle.entity     { fill: #e0853a; }
+  #kg-svg .kg-node-circle.entityType { fill: #7c5ad4; }
+  #kg-svg .kg-node-circle.summary    { fill: #5198d4; }
+  #kg-svg .kg-node-circle.chunk      { fill: #e6e8ee; }
+  #kg-svg .kg-node-circle.document   { fill: #8a3232; }
+  #kg-svg .kg-node-label {
+    fill: #fff; font-size: 8.5px; pointer-events: none;
+    text-anchor: middle; dominant-baseline: middle;
+    font-weight: 500; letter-spacing: 0.01em;
+  }
+  #kg-svg .kg-node-label.dark { fill: #1a1f2a; font-weight: 600; }
+  #kg-svg .kg-node-group.dim .kg-node-circle { opacity: 0.18; }
+  #kg-svg .kg-node-group.dim .kg-node-label  { opacity: 0.18; }
+  #kg-svg .kg-node-group.lit .kg-node-circle {
+    stroke: rgba(255,255,255,0.85); stroke-width: 1.3;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.45));
+  }
+  #kg-svg .kg-node-group.focus .kg-node-circle {
+    stroke: var(--accent); stroke-width: 2;
+    filter: drop-shadow(0 0 12px rgba(51,216,255,0.85));
+  }
+
+  .kg-legend {
+    position: absolute; bottom: 14px; right: 16px; z-index: 5;
+    background: rgba(10,14,22,0.92); border: 1px solid #1a2030;
+    border-radius: 6px; padding: 10px 12px; font-size: 11px;
+    backdrop-filter: blur(8px); min-width: 170px;
+  }
+  .kg-legend .ttl {
+    font-size: 9.5px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 6px;
+  }
+  .kg-legend-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 6px; border-radius: 4px; cursor: pointer;
+    transition: background 0.12s, box-shadow 0.12s;
+  }
+  .kg-legend-row:hover { background: rgba(255,255,255,0.04); }
+  .kg-legend-row.active {
+    background: rgba(51,216,255,0.08);
+    box-shadow: inset 0 0 0 1px rgba(51,216,255,0.35);
+  }
+  .kg-legend-row.active .label { color: var(--accent); }
+  .kg-legend-row.active .count { color: var(--text); }
+  .kg-legend-row .swatch { width: 10px; height: 10px; border-radius: 50%; }
+  .kg-legend-row .swatch.entity     { background: #e0853a; }
+  .kg-legend-row .swatch.entityType { background: #7c5ad4; }
+  .kg-legend-row .swatch.summary    { background: #5198d4; }
+  .kg-legend-row .swatch.chunk      { background: #e6e8ee; }
+  .kg-legend-row .swatch.document   { background: #8a3232; }
+  .kg-legend-row .label { color: var(--text); }
+  .kg-legend-row .count {
+    color: var(--muted); margin-left: auto;
+    font-feature-settings: 'tnum'; min-width: 22px; text-align: right;
+  }
+
+  .kg-search {
+    position: absolute; top: 14px; left: 16px; z-index: 5;
+    background: rgba(10,14,22,0.92); border: 1px solid #1a2030;
+    border-radius: 6px; padding: 7px 10px;
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .kg-search-input {
+    background: transparent; border: none; color: var(--text);
+    font-family: inherit; font-size: 12px; outline: none; min-width: 220px;
+  }
+  .kg-search-input::placeholder { color: var(--muted); }
+
+  .kg-detail {
+    position: absolute; right: 16px; top: 14px; bottom: auto; z-index: 4;
+    width: 280px; max-height: calc(100% - 210px);
+    background: rgba(10,14,22,0.94); border: 1px solid #1a2030;
+    border-radius: 6px; padding: 14px; font-size: 11px;
+    backdrop-filter: blur(8px); overflow-y: auto;
+    display: none;
+  }
+  .kg-detail.open { display: block; }
+  .kg-detail .nm { font-size: 13px; font-weight: 600; color: var(--text); }
+  .kg-detail .ty {
+    display: inline-block; margin-top: 6px; padding: 2px 7px;
+    border-radius: 10px; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.07em;
+    background: rgba(120,150,200,0.15); color: var(--text);
+  }
+  .kg-detail .ty.entity     { background: rgba(224,133,58,0.25);  color: #f4ac6e; }
+  .kg-detail .ty.entityType { background: rgba(124,90,212,0.25);  color: #b89bff; }
+  .kg-detail .ty.summary    { background: rgba(81,152,212,0.25);  color: #8fc1ec; }
+  .kg-detail .ty.chunk      { background: rgba(230,232,238,0.18); color: #e6e8ee; }
+  .kg-detail .ty.document   { background: rgba(138,50,50,0.30);   color: #d96d6d; }
+  .kg-detail .desc { margin-top: 10px; font-size: 11.5px; color: var(--text); line-height: 1.5; }
+  .kg-detail .conn {
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid #1a2030;
+  }
+  .kg-detail .conn-ttl {
+    font-size: 9.5px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 6px;
+  }
+  .kg-detail .conn-row {
+    display: flex; align-items: center; gap: 6px; padding: 3px 0; cursor: pointer;
+    font-size: 11px;
+  }
+  .kg-detail .conn-row:hover { color: var(--accent); }
+  .kg-detail .conn-row .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .kg-detail .conn-row .lab { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .kg-detail .conn-row .rel { color: var(--muted); margin-left: 4px; font-style: italic; flex-shrink: 0; }
+
+  .kg-footer {
+    display: flex; align-items: center; gap: 22px;
+    padding: 0 18px; border-top: 1px solid #14192a;
+    font-size: 10.5px; color: var(--muted);
+    background: rgba(8,11,16,0.6);
+  }
+  .kg-footer .stat { display: inline-flex; align-items: center; gap: 6px; }
+  .kg-footer .stat b { color: var(--text); font-feature-settings: 'tnum'; font-weight: 500; }
+  .kg-footer .src { margin-left: auto; color: var(--accent); opacity: 0.8; }
+
+  /* KG modal ------ alternate "Well Log Tracks" view (swaps with the graph view). */
+  #kg-graph-view, #kg-tracks-view {
+    position: absolute; inset: 0;
+    min-width: 0; min-height: 0;
+  }
+  #kg-graph-view { display: block; }
+  #kg-tracks-view { display: none; padding: 18px 28px 22px; }
+  #kg-modal.tracks-mode #kg-graph-view { display: none; }
+  #kg-modal.tracks-mode #kg-tracks-view { display: flex; flex-direction: column; }
+  /* Hide graph-only overlays when in tracks mode */
+  #kg-modal.tracks-mode .kg-search,
+  #kg-modal.tracks-mode .kg-legend,
+  #kg-modal.tracks-mode .kg-detail { display: none; }
+  /* Swap the header action buttons in tracks mode */
+  #kg-back-btn { display: none; }
+  #kg-modal.tracks-mode #kg-back-btn { display: inline-flex; }
+  #kg-modal.tracks-mode #kg-view-tracks-btn,
+  #kg-modal.tracks-mode #kg-fit { display: none; }
+  #kg-modal.tracks-mode .kg-tag-line { opacity: 0.45; }
+
+  .kg-tracks-banner {
+    display: flex; align-items: baseline; gap: 14px;
+    padding: 4px 4px 12px;
+    font-size: 10.5px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .kg-tracks-banner .ttl { color: var(--text); font-weight: 600; letter-spacing: 0.06em; }
+  .kg-tracks-banner .meta { font-feature-settings: 'tnum'; }
+  .kg-tracks-banner .right { margin-left: auto; }
+  #kg-tracks-host {
+    flex: 1; min-height: 0; min-width: 0;
+    display: flex;
+  }
+  #kg-tracks-host svg { display: block; flex: 1; width: 100%; height: 100%; }
+
+  #kg-back-btn {
+    background: linear-gradient(180deg, rgba(51,216,255,0.14), rgba(51,216,255,0.05));
+    border: 1px solid rgba(51,216,255,0.45); color: var(--accent);
+    padding: 6px 11px 6px 9px; border-radius: 5px;
+    font-size: 11.5px; cursor: pointer; font-family: inherit; font-weight: 500;
+    align-items: center; gap: 6px;
+    transition: background 0.12s, box-shadow 0.12s;
+  }
+  #kg-back-btn:hover {
+    background: rgba(51,216,255,0.22);
+    box-shadow: 0 0 14px rgba(51,216,255,0.25);
+  }
+  #kg-back-btn .arrow { font-size: 13px; line-height: 1; }
+  #kg-view-tracks-btn {
+    background: rgba(20,28,45,0.55); border: 1px solid #1a2030;
+    color: var(--muted); padding: 6px 11px; border-radius: 5px;
+    font-size: 11px; cursor: pointer; font-family: inherit; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: border-color 0.12s, color 0.12s;
+  }
+  #kg-view-tracks-btn:hover { color: var(--text); border-color: #2a3548; }
+  #kg-view-tracks-btn .ico {
+    width: 14px; height: 12px; position: relative; flex-shrink: 0; opacity: 0.85;
+  }
+  #kg-view-tracks-btn .ico::before,
+  #kg-view-tracks-btn .ico::after,
+  #kg-view-tracks-btn .ico .m {
+    content: ''; position: absolute; top: 1px; bottom: 1px; width: 2px;
+    background: currentColor; border-radius: 1px;
+  }
+  #kg-view-tracks-btn .ico::before { left: 1px; }
+  #kg-view-tracks-btn .ico .m       { left: 6px; }
+  #kg-view-tracks-btn .ico::after  { left: 11px; }
+</style>
 </head>
 <body>
+  <!-- MAP VIEW (default) -->
+  <div id="map-wrap">
+    <div id="map"></div>
+    <!-- Hover tooltip ------ well name + coordinates -->
+    <div id="well-hover-tip" class="well-hover-tip" aria-hidden="true">
+      <div class="wht-name" id="wht-name"></div>
+      <div class="wht-coord" id="wht-coord"></div>
+    </div>
+    <!-- 3D / 2D map mode toggle (top-right, beside the MapLibre nav control) -->
+    <div id="map-mode-toggle" class="map-mode-toggle">
+      <button class="mmt-btn active" type="button" data-mode="3d">3D</button>
+      <button class="mmt-btn" type="button" data-mode="2d">2D</button>
+    </div>
+    <!-- 3-button action stack ------ appears next to the clicked well when zoomed in -->
+    <div id="well-actions" class="well-actions" hidden role="menu">
+      <button class="wa-btn" type="button" data-action="welllog" role="menuitem">
+        <span class="material-symbols-outlined wa-icon" aria-hidden="true">equalizer</span>
+        <span class="wa-label">Well Log</span>
+      </button>
+      <button class="wa-btn" type="button" data-action="seismic" role="menuitem">
+        <span class="material-symbols-outlined wa-icon" aria-hidden="true">graphic_eq</span>
+        <span class="wa-label">Seismic</span>
+      </button>
+      <button class="wa-btn" type="button" data-action="geosteering" role="menuitem">
+        <span class="material-symbols-outlined wa-icon" aria-hidden="true">route</span>
+        <span class="wa-label">Geosteering</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- LEFT RAIL -->
   <div id="rail">
-    <h1>Reeves County</h1>
-    <div class="reg">Permian Basin · Field Health</div>
+    <h1>Permian Field Health</h1>
+    <div class="reg">West TX ---- SE New Mexico</div>
 
-    <div class="pattern-card" id="pattern-card">
-      <div class="head">ACTION REQUIRED</div>
-      <div class="body">
-        <b>MD 22 03H is diverging from pad behavior</b><br>
-        Oil rate is down 18%, while offset wells remain within expected range.
-      </div>
-      <div class="cta">→ View pad inspector</div>
-    </div>
-
-    <div class="section-label">
-      Operational layers
-    </div>
-    <div id="layer-list"></div>
-
-    <div class="section-label">
-      Cause breakdown
-    </div>
-    <div id="cause-list" class="cause-list"></div>
-
-    <div class="section-label">Top performers</div>
-    <div id="top-performers"></div>
-
-    <div class="section-label section-label-low">Lowest performers</div>
-    <div id="bottom-performers"></div>
+    <button id="wlc-trigger" type="button" aria-label="Open Well Log Correlation">
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+          <rect x="3"    y="6"  width="3.4" height="13" rx="1" fill="currentColor" opacity="0.85"/>
+          <rect x="10.3" y="3"  width="3.4" height="18" rx="1" fill="currentColor"/>
+          <rect x="17.6" y="9"  width="3.4" height="10" rx="1" fill="currentColor" opacity="0.85"/>
+          <path d="M3 13 q1.7 -2.5 3.4 0" stroke="rgba(42,230,107,0.95)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+          <path d="M10.3 11 q1.7 -3 3.4 0" stroke="rgba(42,230,107,0.95)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+          <path d="M17.6 14 q1.7 -2 3.4 0" stroke="rgba(42,230,107,0.95)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="lbl-blk">
+        <span class="lbl">Open Well Log Correlation</span>
+        <span class="sub">3 wells ---- 4 horizons ---- AASTRA Discovery</span>
+      </span>
+      <span class="chev" aria-hidden="true">------</span>
+    </button>
 
     <div class="section-label">
-      Filters
-      <button type="button" id="filter-reset" class="filter-reset" hidden>Reset</button>
+      <span>Filters</span>
+      <button id="filter-reset" type="button" class="filter-reset" hidden>Reset</button>
     </div>
-
     <div class="filter-block">
-      <div id="cluster-dd" class="filter-dropdown" data-open="false">
-        <button type="button" id="cluster-dd-trigger" class="filter-dd-trigger" aria-expanded="false">
-          <span class="filter-dd-label">Cluster</span>
-          <span id="cluster-dd-count" class="filter-dd-count">All</span>
-          <span class="filter-dd-chev">▼</span>
+      <div class="filter-dropdown" id="cluster-dd" data-open="false">
+        <button class="filter-dd-trigger" type="button" id="cluster-dd-trigger" aria-haspopup="true" aria-expanded="false">
+          <span class="filter-dd-label">Clusters</span>
+          <span class="filter-dd-count" id="cluster-dd-count">All</span>
+          <span class="filter-dd-chev" aria-hidden="true">------</span>
         </button>
-        <div class="filter-dd-panel">
+        <div class="filter-dd-panel" id="cluster-dd-panel" role="menu">
           <div class="filter-dd-title">
             <span>Clusters</span>
-            <button type="button" id="cluster-dd-toggle-all" class="filter-dd-toggle-all">Uncheck all</button>
+            <button id="cluster-dd-toggle-all" type="button" class="filter-dd-toggle-all">Uncheck all</button>
           </div>
-          <div id="cluster-chips" class="filter-chips"></div>
+          <div class="filter-chips" id="cluster-chips"></div>
         </div>
       </div>
     </div>
-
     <div class="filter-block">
       <div class="filter-sublabel">
-        <span>Anomaly threshold</span>
-        <span class="filter-val"><span id="anom-thresh-val">0</span>%</span>
+        <span>Min anomaly</span>
+        <span class="filter-val" id="anom-thresh-val">0%</span>
       </div>
-      <input type="range" id="anom-thresh" class="filter-slider" min="0" max="100" value="0" />
+      <input type="range" id="anom-thresh" class="filter-slider" min="0" max="100" value="0" step="1">
     </div>
-
     <div class="filter-stats" id="filter-stats"></div>
+
+    <div class="section-label">Top Performers</div>
+    <div id="top-performers"></div>
+
+    <div class="section-label section-label-low">Lowest Performing ---- At Risk</div>
+    <div id="bottom-performers"></div>
+    <div id="pattern-card" class="pattern-card">
+      <div class="head">------ Top Pattern Detected</div>
+      <div class="body">Production drop concentrated in <b>North Reeves Cluster B</b></div>
+      <div class="cta">Investigate area ------</div>
+    </div>
+
+    <div class="section-label">Field Overview</div>
+    <div class="kpi">
+      <div class="lbl">Today's Production</div>
+      <div class="val">82,400<span class="unit">BOE/day</span></div>
+      <div class="delta bad">------ 3.8% vs 7-day average</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Active Exceptions</div>
+      <div class="val">47<span class="unit">total ---- 12 high priority</span></div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Downtime Exposure</div>
+      <div class="val">1,260<span class="unit">BOE at risk</span></div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Field Health Index</div>
+      <div class="val">86<span class="unit">/ 100</span></div>
+      <div class="delta bad">------ 4 pts since yesterday</div>
+    </div>
+
+    <div class="section-label">Operational Layers</div>
+    <div id="layer-list"></div>
+
+    <div class="section-label">Cause Breakdown</div>
+    <div id="cause-list" class="cause-list"></div>
   </div>
 
+  <!-- TOP HEADER -->
   <div id="header">
-    <div class="reg">OPERATIONS LENS</div>
-    <div class="ttl">Reeves County · Permian Basin</div>
-    <div class="mode">Real-time field health</div>
+    <div class="reg">Permian Basin ---- Live</div>
+    <div class="ttl" id="header-title">Field Overview</div>
+    <div class="mode" id="header-mode">Day 30 of 30 ---- Mar 29 ------ Apr 28</div>
   </div>
 
+  <!-- LEGEND -->
   <div id="legend">
-    <div class="title">Performance</div>
+    <div class="title">Well Performance ---- High to Low</div>
     <div class="ramp"></div>
-    <div class="scale">
-      <span>High</span>
-      <span>Low</span>
+    <div class="scale"><span>High</span><span>Low</span></div>
+  </div>
+
+  <!-- GROUP INSPECTOR FLYOUT -->
+  <div id="group-inspector">
+    <div class="gi-head">
+      <h2 id="gi-title">North Reeves Cluster B</h2>
+      <button id="gi-close" aria-label="Close">----</button>
+    </div>
+    <div class="gi-stats">
+      <div class="gi-stat"><div class="lbl">Wells in group</div><div class="val" id="gi-wells-count">12</div></div>
+      <div class="gi-stat"><div class="lbl">BOE at risk</div><div class="val" id="gi-boe-risk">604<span class="unit"> BOE/d</span></div></div>
+      <div class="gi-stat"><div class="lbl">Production variance</div><div class="val" id="gi-prod-var">-1.4<span class="unit"> %</span></div></div>
+      <div class="gi-stat"><div class="lbl">Pressure instability</div><div class="val" id="gi-press">30<span class="unit"> psi</span></div></div>
+    </div>
+    <div class="gi-wells-label" id="gi-wells-label">Wells on pad MD 22</div>
+    <div id="gi-wells" class="gi-wells"></div>
+    <div id="gi-summary" class="gi-summary"></div>
+  </div>
+
+  <!-- WELL DETAIL FLYOUT ------ opens when a well row in the rail is clicked -->
+  <div id="well-detail-panel" role="dialog" aria-label="Well details">
+    <div class="wd-head">
+      <h2 id="wd-title">------</h2>
+      <button id="wd-close" type="button" aria-label="Close">----</button>
+    </div>
+    <div class="wd-meta" id="wd-meta">------</div>
+    <div class="wd-stats">
+      <div class="wd-stat"><div class="lbl">Production variance</div><div class="val" id="wd-prod">------</div></div>
+      <div class="wd-stat"><div class="lbl">Active exceptions</div><div class="val" id="wd-exc">------</div></div>
+      <div class="wd-stat"><div class="lbl">Downtime exposure</div><div class="val" id="wd-down">------</div></div>
+      <div class="wd-stat"><div class="lbl">Pressure instability</div><div class="val" id="wd-press-w">------</div></div>
+      <div class="wd-stat"><div class="lbl">Equipment health</div><div class="val" id="wd-equip">------</div></div>
+      <div class="wd-stat"><div class="lbl">Sensor confidence</div><div class="val" id="wd-sensor">------</div></div>
+    </div>
+    <div class="wd-anomaly">
+      <div class="lbl"><span>Overall anomaly</span><span class="val" id="wd-anomaly-val">------</span></div>
+      <div class="bar"><div class="fill" id="wd-anomaly-fill"></div></div>
     </div>
   </div>
 
-  <div class="map-mode-toggle" id="map-mode-toggle">
-    <button type="button" class="mmt-btn active" data-mode="3d">3D</button>
-    <button type="button" class="mmt-btn" data-mode="2d">2D</button>
-  </div>
-
-  <div id="map-wrap">
-    <div id="map"></div>
-    <div class="well-hover-tip" id="well-hover-tip">
-      <div class="wht-name"></div>
-      <div class="wht-coord"></div>
-    </div>
-  </div>
-
+  <!-- BOTTOM SCRUBBER -->
   <div id="scrubber">
-    <button type="button" id="play-btn">▶</button>
+    <button id="play-btn">------</button>
     <div id="timeline">
       <div class="tl-inner">
         <div id="markers-track"></div>
         <div id="playhead"></div>
       </div>
     </div>
-    <div id="day-readout"></div>
+    <div id="day-readout">Day 30 of 30 ---- Mar 29 ------ Apr 28</div>
   </div>
 
-  <div id="group-inspector" class=""></div>
-  <div id="well-detail-panel" class=""></div>
+  <!-- =================================================================
+       Drilling 3D scene overlay ------ opens when a well row is clicked.
+       ================================================================= -->
+  <div id="drilling-scene">
+    <div id="drilling-canvas-wrap"></div>
 
-  <div id="app"></div>
-  <link rel="stylesheet" href="/src/style.css">
-  <script type="module" src="/src/main.ts"></script>
+    <div id="drilling-top-bar">
+      <button id="drilling-back" title="Back to map">
+        <span class="arrow">------</span><span>Map</span>
+      </button>
+      <div class="dt-title-block">
+        <div class="dt-eyebrow">Directional Command Center</div>
+        <div class="dt-title" id="dt-well-name">MD 22 03H</div>
+        <div class="dt-meta" id="dt-well-meta">North Reeves Cluster B ---- Pad MD 22 ---- Lateral 04</div>
+      </div>
+      <div id="dt-alerts-row">
+        <div class="dt-alert-chip critical"><span class="icon">------</span><span>Collision Risk</span></div>
+        <div class="dt-alert-chip warn"><span class="icon">------</span><span>Target Drift</span></div>
+        <div class="dt-alert-chip warn pulse"><span class="icon">------</span><span>Pressure Spike</span></div>
+      </div>
+      <div id="dt-status-pill"><span class="dot"></span><span>Drilling ahead</span></div>
+    </div>
+
+    <div id="dt-tvd-axis">
+      <div class="dt-axis-title">TVD (ft)</div>
+      <div class="dt-axis-tick" data-y="0.04">0</div>
+      <div class="dt-axis-tick" data-y="0.12">2,000</div>
+      <div class="dt-axis-tick" data-y="0.20">4,000</div>
+      <div class="dt-axis-tick" data-y="0.28">6,000</div>
+      <div class="dt-axis-tick" data-y="0.36">8,000</div>
+      <div class="dt-axis-tick" data-y="0.44">10,000</div>
+      <div class="dt-axis-tick" data-y="0.52">12,000</div>
+      <div class="dt-axis-tick" data-y="0.60">14,000</div>
+      <div class="dt-axis-tick" data-y="0.68">16,000</div>
+      <div class="dt-axis-tick" data-y="0.76">18,000</div>
+      <div class="dt-axis-tick" data-y="0.84">20,000</div>
+    </div>
+    <div id="dt-stratum-labels">
+      <div class="dt-stratum-label" data-y="0.13" style="--c:#c08850">Top Shale</div>
+      <div class="dt-stratum-label" data-y="0.23" style="--c:#e0a936">Top Sand</div>
+      <div class="dt-stratum-label" data-y="0.33" style="--c:#5da7d8">Top Limestone</div>
+      <div class="dt-stratum-label" data-y="0.43" style="--c:#7a98a8">Top Reservoir</div>
+      <div class="dt-stratum-label dashed" data-y="0.51" style="--c:#7ee07a">Target Top</div>
+      <div class="dt-stratum-label dashed" data-y="0.59" style="--c:#7ee07a">Target Base</div>
+      <div class="dt-stratum-label" data-y="0.78" style="--c:#a78cd8">Base Reservoir</div>
+    </div>
+    <div id="dt-distance-axis">
+      <div class="dt-axis-tick" data-x="0.10">0</div>
+      <div class="dt-axis-tick" data-x="0.27">5,000</div>
+      <div class="dt-axis-tick" data-x="0.45">10,000</div>
+      <div class="dt-axis-tick" data-x="0.63">15,000</div>
+      <div class="dt-axis-tick" data-x="0.81">20,000</div>
+      <div class="dt-axis-tick" data-x="0.96">25,000 ft</div>
+    </div>
+
+    <div id="dt-offset-labels">
+      <div class="dt-offset-label" style="left: 14%; top: 9%;">Offset Well<br><span>Falcon 24-07H</span></div>
+      <div class="dt-offset-label" style="left: 26%; top: 8%;">Offset Well<br><span>Falcon 24-09H</span></div>
+      <div class="dt-offset-label" style="left: 86%; top: 9%;">Offset Well<br><span>Falcon 24-03H</span></div>
+      <div id="dt-spike-label" class="dt-spike-flag">
+        <span class="ttl">Pressure Spike</span>
+        <span class="val">+0.4 ppg ---- last 200 ft</span>
+      </div>
+    </div>
+
+    <div id="dt-nav-controls">
+      <button id="dt-reset-view" type="button" title="Return to default isometric view">
+        <span>------</span> Reset view
+      </button>
+      <div id="dt-orbit-hint">Drag to orbit ---- Right-drag to pan ---- Wheel to zoom</div>
+    </div>
+    <div id="dt-gizmo"></div>
+
+    <div id="dt-bit-card">
+      <div class="lbl">Bit position</div>
+      <div class="val" id="dt-bit-md">10,847<span style="font-size:11px;color:#7a8597"> ft MD</span></div>
+      <div class="row">
+        <div class="col"><div class="lbl">Inclination</div><div class="val" style="font-size:14px">88.4----</div></div>
+        <div class="col"><div class="lbl">Azimuth</div><div class="val" style="font-size:14px">N 84---- E</div></div>
+      </div>
+      <div class="row">
+        <div class="col"><div class="lbl">ROP</div><div class="val" style="font-size:14px">62 ft/hr</div></div>
+        <div class="col"><div class="lbl">WOB</div><div class="val" style="font-size:14px">28 klbs</div></div>
+      </div>
+    </div>
+
+    <div id="dt-bottom-panel">
+      <div class="dt-panel-block">
+        <div class="lbl">Target window</div>
+        <div class="val good">In zone</div>
+        <div class="sub">7 ft below target top ---- 12 ft above target base</div>
+      </div>
+      <div class="dt-panel-block">
+        <div class="lbl">Anti-collision</div>
+        <div class="val bad">CRITICAL</div>
+        <div class="sub">Falcon 24-03H ---- 38 ft separation ---- trending down</div>
+      </div>
+      <div class="dt-panel-block">
+        <div class="lbl">Pore pressure</div>
+        <div class="dt-pp-row">
+          <div class="val warn">11.6 ppg</div>
+          <svg class="dt-spark" width="110" height="34" viewBox="0 0 110 34" aria-hidden="true">
+            <defs>
+              <linearGradient id="dt-spark-fill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%"  stop-color="rgba(240,177,78,0.45)"/>
+                <stop offset="100%" stop-color="rgba(240,177,78,0)"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,28 L14,27 L26,26 L38,25 L48,24 L58,21 L68,17 L78,12 L88,8 L96,5 L104,3 L110,2 L110,34 L0,34 Z"
+                  fill="url(#dt-spark-fill)"/>
+            <polyline points="0,28 14,27 26,26 38,25 48,24 58,21 68,17 78,12 88,8 96,5 104,3 110,2"
+                      fill="none" stroke="#f0b14e" stroke-width="1.4" stroke-linejoin="round"/>
+            <circle class="dt-spark-pulse" cx="110" cy="2" r="3" fill="#f0b14e"/>
+          </svg>
+        </div>
+        <div class="sub"><span class="dt-spike-chip">------ +0.4 ppg</span> over last 200 ft</div>
+      </div>
+      <div class="dt-panel-block">
+        <div class="lbl">Projected TD</div>
+        <div class="val">22,100 ft</div>
+        <div class="sub">3.8 days remaining at current ROP</div>
+      </div>
+    </div>
+  </div>
+
+<!-- =================================================================
+     Map / 2D logic ------ MapLibre + deck.gl ColumnLayer for wells,
+     plus the group inspector + pattern card flow.
+     ================================================================= -->
+
+<script type="module" src="/src/main.ts"></script>
 </body>
 </html>
