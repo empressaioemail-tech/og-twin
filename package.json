@@ -1,0 +1,29 @@
+{
+  "name": "og-twin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "npx tsx scripts/emit-twin-data.mts",
+    "build": "tsc && npx tsx scripts/build.mts",
+    "preview": "vite preview",
+    "pretest": "npx tsx scripts/emit-twin-data.mts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@empressaio/atom-contract": "file:vendor/empressaio-atom-contract-1.7.0.tgz",
+    "deck.gl": "^9.0.33",
+    "maplibre-gl": "^4.7.1",
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^28.0.3",
+    "@types/three": "^0.160.0",
+    "jsdom": "^29.1.1",
+    "typescript": "^5.6.2",
+    "vite": "^6.0.0",
+    "vitest": "^2.1.0"
+  }
+}

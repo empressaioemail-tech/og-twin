@@ -1,0 +1,146 @@
+{
+  "wells": [
+    {
+      "wellDid": "well_42-501-30025",
+      "apiNumber14": "42-501-30025",
+      "wellName": "STATE REEVES D 1H",
+      "wellNumber": "1H",
+      "wellType": "oil",
+      "status": "active",
+      "spudDate": "2024-08-01",
+      "completionDate": "2024-10-05",
+      "totalDepth": 21460,
+      "surfaceLocation": {
+        "lng": -103.705,
+        "lat": 31.635,
+        "datum": "WGS84"
+      },
+      "district": "Reeves",
+      "sourceCitation": "RRC W-1 permit 42-501-30025, filed 2024-07-15",
+      "accessPolicy": "public-free",
+      "confidence": {
+        "provenance": "asserted",
+        "mean": 0.95
+      }
+    },
+    {
+      "wellDid": "well_42-501-30026",
+      "apiNumber14": "42-501-30026",
+      "wellName": "STATE REEVES D 2H",
+      "wellNumber": "2H",
+      "wellType": "oil",
+      "status": "active",
+      "spudDate": "2024-08-04",
+      "completionDate": "2024-10-08",
+      "totalDepth": 21425,
+      "surfaceLocation": {
+        "lng": -103.701,
+        "lat": 31.635,
+        "datum": "WGS84"
+      },
+      "district": "Reeves",
+      "sourceCitation": "RRC W-1 permit 42-501-30026, filed 2024-07-15",
+      "accessPolicy": "public-free",
+      "confidence": {
+        "provenance": "asserted",
+        "mean": 0.95
+      }
+    },
+    {
+      "wellDid": "well_42-501-30027",
+      "apiNumber14": "42-501-30027",
+      "wellName": "STATE REEVES D 3H",
+      "wellNumber": "3H",
+      "wellType": "oil",
+      "status": "active",
+      "spudDate": "2024-08-11",
+      "completionDate": "2024-10-15",
+      "totalDepth": 21495,
+      "surfaceLocation": {
+        "lng": -103.697,
+        "lat": 31.635,
+        "datum": "WGS84"
+      },
+      "district": "Reeves",
+      "sourceCitation": "RRC W-1 permit 42-501-30027, filed 2024-07-15",
+      "accessPolicy": "public-free",
+      "confidence": {
+        "provenance": "asserted",
+        "mean": 0.95
+      }
+    },
+    {
+      "wellDid": "well_42-501-30028",
+      "apiNumber14": "42-501-30028",
+      "wellName": "STATE REEVES D 4H",
+      "wellNumber": "4H",
+      "wellType": "oil",
+      "status": "active",
+      "spudDate": "2024-08-14",
+      "completionDate": "2024-10-18",
+      "totalDepth": 21440,
+      "surfaceLocation": {
+        "lng": -103.693,
+        "lat": 31.635,
+        "datum": "WGS84"
+      },
+      "district": "Reeves",
+      "sourceCitation": "RRC W-1 permit 42-501-30028, filed 2024-07-15",
+      "accessPolicy": "public-free",
+      "confidence": {
+        "provenance": "asserted",
+        "mean": 0.95
+      }
+    },
+    {
+      "wellDid": "well_42-501-30029",
+      "apiNumber14": "42-501-30029",
+      "wellName": "STATE REEVES E 1H",
+      "wellNumber": "1H",
+      "wellType": "oil",
+      "status": "active",
+      "spudDate": "2024-08-21",
+      "completionDate": "2024-10-25",
+      "totalDepth": 21475,
+      "surfaceLocation": {
+        "lng": -103.540,
+        "lat": 31.790,
+        "datum": "WGS84"
+      },
+      "district": "Reeves",
+      "sourceCitation": "RRC W-1 permit 42-501-30029, filed 2024-08-05",
+      "accessPolicy": "public-free",
+      "confidence": {
+        "provenance": "asserted",
+        "mean": 0.95
+      }
+    },
+    {
+      "wellDid": "well_42-501-30030",
+      "apiNumber14": "42-501-30030",
+      "wellName": "STATE REEVES E 2H",
+      "wellNumber": "2H",
+      "wellType": "oil",
+      "status": "active",
+      "spudDate": "2024-08-24",
+      "completionDate": "2024-10-28",
+      "totalDepth": 21510,
+      "surfaceLocation": {
+        "lng": -103.536,
+        "lat": 31.790,
+        "datum": "WGS84"
+      },
+      "district": "Reeves",
+      "sourceCitation": "RRC W-1 permit 42-501-30030, filed 2024-08-05",
+      "accessPolicy": "public-free",
+      "confidence": {
+        "provenance": "asserted",
+        "mean": 0.95
+      }
+    }
+  ],
+  "productionTimeseries": [],
+  "rrcLeases": [],
+  "revenueAllocationUnits": [],
+  "equipmentStates": []
+}
