@@ -109,6 +109,89 @@ window.__TWIN_DATA__ = ${JSON.stringify({
   regionLabel,
   overlayPanels
 }, null, 2)};
+
+// Honesty badges: inject "OPERATOR OVERLAY · SEEDED" chips to overlayPanels when seeded is active
+(function() {
+  if (window.__TWIN_SOURCE__ === 'synthetic' || !window.__TWIN_DATA__?.overlayPanels) return;
+  
+  // Wait for DOM to be ready
+  function addBadges() {
+    const overlayPanels = window.__TWIN_DATA__.overlayPanels;
+    const badgeHTML = '<span style="display:inline-block;background:rgba(20,28,45,0.55);border:1px solid #1a2030;color:#7a8597;padding:2px 8px;border-radius:10px;font-size:9px;letter-spacing:0.05em;margin-left:6px;font-weight:500;">OPERATOR OVERLAY · SEEDED</span>';
+    
+    // Add badges to KPI cards (Field Overview section)
+    overlayPanels.forEach(panelId => {
+      // Map panel IDs to KPI card labels
+      const labelMap = {
+        'equipment_health': 'Field Health Index',
+        'sensor_reliability': 'Active Exceptions',
+        'well_communication': 'Active Exceptions',
+        'pressure_anomaly': 'Downtime Exposure'
+      };
+      
+      const labelText = labelMap[panelId];
+      if (labelText) {
+        // Find KPI cards by their label text
+        const kpis = document.querySelectorAll('.kpi');
+        kpis.forEach(kpi => {
+          const lbl = kpi.querySelector('.lbl');
+          if (lbl && lbl.textContent.includes(labelText) && !kpi.querySelector('[data-badge="seeded"]')) {
+            const badge = document.createElement('span');
+            badge.setAttribute('data-badge', 'seeded');
+            badge.style.cssText = 'display:inline-block;background:rgba(20,28,45,0.55);border:1px solid #1a2030;color:#7a8597;padding:2px 8px;border-radius:10px;font-size:9px;letter-spacing:0.05em;margin-left:6px;font-weight:500;';
+            badge.textContent = 'OPERATOR OVERLAY · SEEDED';
+            lbl.appendChild(badge);
+          }
+        });
+      }
+    });
+    
+    // Add badges to layer-rows (Operational Layers section)
+    overlayPanels.forEach(panelId => {
+      // Map panel IDs to layer row IDs (metrics)
+      const metricIds = {
+        'equipment_health': 'equipment_health',
+        'sensor_reliability': 'sensor_reliability',
+        'well_communication': 'well_communication',
+        'pressure_anomaly': 'pressure_anomaly'
+      };
+      
+      const metricId = metricIds[panelId];
+      if (metricId) {
+        // Find layer-row by data attribute or by checking the metric
+        const layerRows = document.querySelectorAll('.layer-row');
+        layerRows.forEach(row => {
+          // Check if this row corresponds to the metric
+          const rowText = row.textContent || '';
+          const matchMap = {
+            'equipment_health': 'Equipment health',
+            'sensor_reliability': 'Sensor confidence',
+            'well_communication': 'Well communication',
+            'pressure_anomaly': 'Pressure instability'
+          };
+          
+          if (rowText.includes(matchMap[metricId]) && !row.querySelector('[data-badge="seeded"]')) {
+            const nameSpan = row.querySelector('.name');
+            if (nameSpan) {
+              const badge = document.createElement('span');
+              badge.setAttribute('data-badge', 'seeded');
+              badge.style.cssText = 'display:inline-block;background:rgba(20,28,45,0.55);border:1px solid #1a2030;color:#7a8597;padding:2px 7px;border-radius:10px;font-size:8.5px;letter-spacing:0.05em;margin-left:6px;font-weight:500;';
+              badge.textContent = 'OPERATOR OVERLAY · SEEDED';
+              nameSpan.appendChild(badge);
+            }
+          }
+        });
+      }
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addBadges);
+  } else {
+    // DOM is already ready, run immediately
+    addBadges();
+  }
+})();
 `;
   
   // Ensure public directory exists
