@@ -40,7 +40,7 @@
   body { display: flex; flex-direction: column; height: 100vh; }
 
   /* Rail is an OVERLAY on top of the map (not a flex item) so the
-     map canvas always spans the full viewport width ÃƒÂ¢Ã‚â‚¬Ã‚â€ when the rail
+     map canvas always spans the full viewport width — when the rail
      fades on hand-off, the map underneath is already there. */
   #rail {
     position: absolute; top: 0; left: 0; bottom: 0; width: 360px;
@@ -153,7 +153,7 @@
     background: rgba(51,216,255,0.10);
   }
   .filter-chip.active::before {
-    content: 'ÃƒÂ¢Ã‚Å“Ã‚â€œ '; color: var(--accent); margin-right: 1px;
+    content: '✓ '; color: var(--accent); margin-right: 1px;
   }
   .filter-slider {
     -webkit-appearance: none; appearance: none;
@@ -182,21 +182,21 @@
   }
   .filter-stats b { color: var(--text); font-weight: 500; }
   .section-label.section-label-low { color: var(--bad); }
-  /* Top-performer cells ÃƒÂ¢Ã‚â‚¬Ã‚â€ tinted with the legend's "high performance" cyan */
+  /* Top-performer cells — tinted with the legend's "high performance" cyan */
   .well-action.perf-high {
     border-color: rgba(1,152,189,0.36);
     background: rgba(1,152,189,0.10);
   }
   .well-action.perf-high:hover { border-color: rgba(73,227,206,0.65); }
   .well-action.perf-high .action-meta .val { color: rgb(73,227,206); }
-  /* Lowest-performer cells ÃƒÂ¢Ã‚â‚¬Ã‚â€ tinted with the legend's "low performance" red */
+  /* Lowest-performer cells — tinted with the legend's "low performance" red */
   .well-action.perf-low {
     border-color: rgba(214,51,78,0.40);
     background: rgba(214,51,78,0.10);
   }
   .well-action.perf-low:hover { border-color: rgba(214,51,78,0.65); }
   .well-action.perf-low .action-meta .val { color: var(--bad); }
-  /* Selected state ÃƒÂ¢Ã‚â‚¬Ã‚â€ colour matches the row's performance band, name stays white */
+  /* Selected state — colour matches the row's performance band, name stays white */
   .well-action.selected.perf-high {
     border-color: var(--accent);
     box-shadow: 0 0 0 1px var(--accent), 0 0 14px rgba(51,216,255,0.30);
@@ -281,7 +281,7 @@
     color: var(--muted); font-size: 11px;
     margin-top: 2px; font-feature-settings: 'tnum';
   }
-  /* 3D / 2D toggle ÃƒÂ¢Ã‚â‚¬Ã‚â€ top-right corner of the map */
+  /* 3D / 2D toggle — top-right corner of the map */
   .map-mode-toggle {
     position: absolute; top: 14px; right: 60px; z-index: 12;
     display: inline-flex;
@@ -341,12 +341,12 @@
   }
   .wa-icon {
     color: var(--accent); flex-shrink: 0;
-    /* Material Symbols sizing ÃƒÂ¢Ã‚â‚¬Ã‚â€ keep proportional to the 14px button text */
+    /* Material Symbols sizing — keep proportional to the 14px button text */
     font-size: 20px; line-height: 1; width: 20px;
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 
-  /* Well action dropdown ÃƒÂ¢Ã‚â‚¬Ã‚â€ opens at the clicked well's pixel position */
+  /* Well action dropdown — opens at the clicked well's pixel position */
   .well-menu {
     position: absolute; z-index: 30;
     background: rgba(10,14,22,0.96);
@@ -402,10 +402,10 @@
   }
 
   /* Hand-off transition. Two phases:
-       .exiting   ÃƒÂ¢Ã‚â‚¬Ã‚â€ applied IMMEDIATELY on click. Slow fade for the
+       .exiting   — applied IMMEDIATELY on click. Slow fade for the
                      left rail + KPI panels so they're already gone by
                      the time the bar arrives at the top.
-       .handing-off ÃƒÂ¢Ã‚â‚¬Ã‚â€ applied late (toward the end of the bar's
+       .handing-off — applied late (toward the end of the bar's
                      motion). Crisp fade for the map canvas + the
                      remaining top-bar UI, hand-off to underground. */
   body.exiting #rail,
@@ -545,7 +545,7 @@
   .gi-stat .val { font-size: 16px; margin-top: 3px; font-weight: 600; }
   .gi-stat .val .unit { font-size: 10.5px; color: var(--muted); font-weight: 400; }
 
-  /* Well detail panel ÃƒÂ¢Ã‚â‚¬Ã‚â€ opens when a single well is selected from the rail */
+  /* Well detail panel — opens when a single well is selected from the rail */
   #well-detail-panel {
     position: absolute; top: 24px; left: 380px; width: 360px;
     max-height: calc(100vh - 110px);
@@ -657,7 +657,7 @@
   .well-row-insight .txt { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
   /* ============================================================
-     DRILLING SCENE ÃƒÂ¢Ã‚â‚¬Ã‚â€ 3D directional command center overlay.
+     DRILLING SCENE — 3D directional command center overlay.
      Sits BEHIND the map (z:5) until the hand-off; promoted to
      z:100 once the crossfade completes. */
   #drilling-scene {
@@ -711,7 +711,7 @@
   .dt-alert-chip.critical { background: rgba(214,51,78,0.16); border-color: rgba(214,51,78,0.55); color: var(--bad); }
   .dt-alert-chip.warn { background: rgba(240,177,78,0.14); border-color: rgba(240,177,78,0.45); color: var(--warn); }
   .dt-alert-chip .icon { font-size: 12px; line-height: 1; }
-  /* Pulsing alert chip ÃƒÂ¢Ã‚â‚¬Ã‚â€ used for the live Pressure Spike indicator */
+  /* Pulsing alert chip — used for the live Pressure Spike indicator */
   @keyframes dt-chip-pulse {
     0%   { box-shadow: 0 0 0 0   rgba(240,177,78,0.55); }
     70%  { box-shadow: 0 0 0 10px rgba(240,177,78,0);    }
@@ -805,7 +805,7 @@
     border: 1px solid #1a2030; line-height: 1.3;
   }
   .dt-offset-label span { color: var(--text); font-weight: 500; }
-  /* Pressure-spike call-out ÃƒÂ¢Ã‚â‚¬Ã‚â€ projected from a 3D point each frame.
+  /* Pressure-spike call-out — projected from a 3D point each frame.
      Rendered as a "pin": the flag floats high above the spike marker,
      connected by a thin vertical stem with a small dot at the foot. */
   .dt-spike-flag {
@@ -831,7 +831,7 @@
     font-feature-settings: 'tnum'; font-weight: 500;
     color: var(--text);
   }
-  /* Stem ÃƒÂ¢Ã‚â‚¬Ã‚â€ a thin amber line dropping from the flag down to the marker */
+  /* Stem — a thin amber line dropping from the flag down to the marker */
   .dt-spike-flag::after {
     content: ''; position: absolute;
     left: 50%; top: 100%;
@@ -908,7 +908,7 @@
   }
 
   /* ============================================================
-     WELL LOG CORRELATION MODAL ÃƒÂ¢Ã‚â‚¬Ã‚â€ sample case study (AASTRA Discovery)
+     WELL LOG CORRELATION MODAL — sample case study (AASTRA Discovery)
      ============================================================ */
   #wlc-trigger {
     width: 100%; margin: 6px 0 4px;
@@ -1283,7 +1283,7 @@
   .wlc-xp .xp-point { cursor: pointer; }
 
   /* ============================================================
-     KNOWLEDGE GRAPH MODAL ÃƒÂ¢Ã‚â‚¬Ã‚â€ cognee-style synthetic graph.
+     KNOWLEDGE GRAPH MODAL — cognee-style synthetic graph.
      Opens when a cross-plot point is clicked.
      ============================================================ */
   #kg-modal {
@@ -1463,7 +1463,7 @@
   .kg-footer .stat b { color: var(--text); font-feature-settings: 'tnum'; font-weight: 500; }
   .kg-footer .src { margin-left: auto; color: var(--accent); opacity: 0.8; }
 
-  /* KG modal ÃƒÂ¢Ã‚â‚¬Ã‚â€ alternate "Well Log Tracks" view (swaps with the graph view). */
+  /* KG modal — alternate "Well Log Tracks" view (swaps with the graph view). */
   #kg-graph-view, #kg-tracks-view {
     position: absolute; inset: 0;
     min-width: 0; min-height: 0;
@@ -1537,7 +1537,7 @@
   <!-- MAP VIEW (default) -->
   <div id="map-wrap">
     <div id="map"></div>
-    <!-- Hover tooltip ÃƒÂ¢Ã‚â‚¬Ã‚â€ well name + coordinates -->
+    <!-- Hover tooltip — well name + coordinates -->
     <div id="well-hover-tip" class="well-hover-tip" aria-hidden="true">
       <div class="wht-name" id="wht-name"></div>
       <div class="wht-coord" id="wht-coord"></div>
@@ -1547,7 +1547,7 @@
       <button class="mmt-btn active" type="button" data-mode="3d">3D</button>
       <button class="mmt-btn" type="button" data-mode="2d">2D</button>
     </div>
-    <!-- 3-button action stack ÃƒÂ¢Ã‚â‚¬Ã‚â€ appears next to the clicked well when zoomed in -->
+    <!-- 3-button action stack — appears next to the clicked well when zoomed in -->
     <div id="well-actions" class="well-actions" hidden role="menu">
       <button class="wa-btn" type="button" data-action="welllog" role="menuitem">
         <span class="material-symbols-outlined wa-icon" aria-hidden="true">equalizer</span>
@@ -1567,7 +1567,7 @@
   <!-- LEFT RAIL -->
   <div id="rail">
     <h1>Permian Field Health</h1>
-    <div class="reg">West TX Â· SE New Mexico</div>
+    <div class="reg">West TX · SE New Mexico</div>
 
     <button id="wlc-trigger" type="button" aria-label="Open Well Log Correlation">
       <span class="icon" aria-hidden="true">
@@ -1582,9 +1582,9 @@
       </span>
       <span class="lbl-blk">
         <span class="lbl">Open Well Log Correlation</span>
-        <span class="sub">3 wells Â· 4 horizons Â· AASTRA Discovery</span>
+        <span class="sub">3 wells · 4 horizons · AASTRA Discovery</span>
       </span>
-      <span class="chev" aria-hidden="true">â†â€™</span>
+      <span class="chev" aria-hidden="true">→</span>
     </button>
 
     <div class="section-label">
@@ -1596,7 +1596,7 @@
         <button class="filter-dd-trigger" type="button" id="cluster-dd-trigger" aria-haspopup="true" aria-expanded="false">
           <span class="filter-dd-label">Clusters</span>
           <span class="filter-dd-count" id="cluster-dd-count">All</span>
-          <span class="filter-dd-chev" aria-hidden="true">ÃƒÂ¢Ã‚â€“Ã‚Â¾</span>
+          <span class="filter-dd-chev" aria-hidden="true">▾</span>
         </button>
         <div class="filter-dd-panel" id="cluster-dd-panel" role="menu">
           <div class="filter-dd-title">
@@ -1619,23 +1619,23 @@
     <div class="section-label">Top Performers</div>
     <div id="top-performers"></div>
 
-    <div class="section-label section-label-low">Lowest Performing Â· At Risk</div>
+    <div class="section-label section-label-low">Lowest Performing · At Risk</div>
     <div id="bottom-performers"></div>
     <div id="pattern-card" class="pattern-card">
-      <div class="head">ÃƒÂ¢Ã‚Å¡Ã‚Â  Top Pattern Detected</div>
+      <div class="head">⚠ Top Pattern Detected</div>
       <div class="body">Production drop concentrated in <b>North Reeves Cluster B</b></div>
-      <div class="cta">Investigate area â†â€™</div>
+      <div class="cta">Investigate area →</div>
     </div>
 
     <div class="section-label">Field Overview</div>
     <div class="kpi">
       <div class="lbl">Today's Production</div>
       <div class="val">82,400<span class="unit">BOE/day</span></div>
-      <div class="delta bad">ÃƒÂ¢Ã‚â€“Ã‚Â¼ 3.8% vs 7-day average</div>
+      <div class="delta bad">▼ 3.8% vs 7-day average</div>
     </div>
     <div class="kpi">
       <div class="lbl">Active Exceptions</div>
-      <div class="val">47<span class="unit">total Â· 12 high priority</span></div>
+      <div class="val">47<span class="unit">total · 12 high priority</span></div>
     </div>
     <div class="kpi">
       <div class="lbl">Downtime Exposure</div>
@@ -1644,7 +1644,7 @@
     <div class="kpi">
       <div class="lbl">Field Health Index</div>
       <div class="val">86<span class="unit">/ 100</span></div>
-      <div class="delta bad">ÃƒÂ¢Ã‚â€“Ã‚Â¼ 4 pts since yesterday</div>
+      <div class="delta bad">▼ 4 pts since yesterday</div>
     </div>
 
     <div class="section-label">Operational Layers</div>
@@ -1656,14 +1656,14 @@
 
   <!-- TOP HEADER -->
   <div id="header">
-    <div class="reg">Permian Basin Â· Live</div>
+    <div class="reg">Permian Basin · Live</div>
     <div class="ttl" id="header-title">Field Overview</div>
-    <div class="mode" id="header-mode">Day 30 of 30 Â· Mar 29 ÃƒÂ¢Ã‚â‚¬Ã‚â€œ Apr 28</div>
+    <div class="mode" id="header-mode">Day 30 of 30 · Mar 29 – Apr 28</div>
   </div>
 
   <!-- LEGEND -->
   <div id="legend">
-    <div class="title">Well Performance Â· High to Low</div>
+    <div class="title">Well Performance · High to Low</div>
     <div class="ramp"></div>
     <div class="scale"><span>High</span><span>Low</span></div>
   </div>
@@ -1672,7 +1672,7 @@
   <div id="group-inspector">
     <div class="gi-head">
       <h2 id="gi-title">North Reeves Cluster B</h2>
-      <button id="gi-close" aria-label="Close">ÃƒÆ’Ã‚â€”</button>
+      <button id="gi-close" aria-label="Close">×</button>
     </div>
     <div class="gi-stats">
       <div class="gi-stat"><div class="lbl">Wells in group</div><div class="val" id="gi-wells-count">12</div></div>
@@ -1685,58 +1685,58 @@
     <div id="gi-summary" class="gi-summary"></div>
   </div>
 
-  <!-- WELL DETAIL FLYOUT ÃƒÂ¢Ã‚â‚¬Ã‚â€ opens when a well row in the rail is clicked -->
+  <!-- WELL DETAIL FLYOUT — opens when a well row in the rail is clicked -->
   <div id="well-detail-panel" role="dialog" aria-label="Well details">
     <div class="wd-head">
-      <h2 id="wd-title">ÃƒÂ¢Ã‚â‚¬Ã‚â€</h2>
-      <button id="wd-close" type="button" aria-label="Close">ÃƒÆ’Ã‚â€”</button>
+      <h2 id="wd-title">—</h2>
+      <button id="wd-close" type="button" aria-label="Close">×</button>
     </div>
-    <div class="wd-meta" id="wd-meta">ÃƒÂ¢Ã‚â‚¬Ã‚â€</div>
+    <div class="wd-meta" id="wd-meta">—</div>
     <div class="wd-stats">
-      <div class="wd-stat"><div class="lbl">Production variance</div><div class="val" id="wd-prod">ÃƒÂ¢Ã‚â‚¬Ã‚â€</div></div>
-      <div class="wd-stat"><div class="lbl">Active exceptions</div><div class="val" id="wd-exc">ÃƒÂ¢Ã‚â‚¬Ã‚â€</div></div>
-      <div class="wd-stat"><div class="lbl">Downtime exposure</div><div class="val" id="wd-down">ÃƒÂ¢Ã‚â‚¬Ã‚â€</div></div>
-      <div class="wd-stat"><div class="lbl">Pressure instability</div><div class="val" id="wd-press-w">ÃƒÂ¢Ã‚â‚¬Ã‚â€</div></div>
-      <div class="wd-stat"><div class="lbl">Equipment health</div><div class="val" id="wd-equip">ÃƒÂ¢Ã‚â‚¬Ã‚â€</div></div>
-      <div class="wd-stat"><div class="lbl">Sensor confidence</div><div class="val" id="wd-sensor">ÃƒÂ¢Ã‚â‚¬Ã‚â€</div></div>
+      <div class="wd-stat"><div class="lbl">Production variance</div><div class="val" id="wd-prod">—</div></div>
+      <div class="wd-stat"><div class="lbl">Active exceptions</div><div class="val" id="wd-exc">—</div></div>
+      <div class="wd-stat"><div class="lbl">Downtime exposure</div><div class="val" id="wd-down">—</div></div>
+      <div class="wd-stat"><div class="lbl">Pressure instability</div><div class="val" id="wd-press-w">—</div></div>
+      <div class="wd-stat"><div class="lbl">Equipment health</div><div class="val" id="wd-equip">—</div></div>
+      <div class="wd-stat"><div class="lbl">Sensor confidence</div><div class="val" id="wd-sensor">—</div></div>
     </div>
     <div class="wd-anomaly">
-      <div class="lbl"><span>Overall anomaly</span><span class="val" id="wd-anomaly-val">ÃƒÂ¢Ã‚â‚¬Ã‚â€</span></div>
+      <div class="lbl"><span>Overall anomaly</span><span class="val" id="wd-anomaly-val">—</span></div>
       <div class="bar"><div class="fill" id="wd-anomaly-fill"></div></div>
     </div>
   </div>
 
   <!-- BOTTOM SCRUBBER -->
   <div id="scrubber">
-    <button id="play-btn">ÃƒÂ¢Ã‚â€“Ã‚Â¶</button>
+    <button id="play-btn">▶</button>
     <div id="timeline">
       <div class="tl-inner">
         <div id="markers-track"></div>
         <div id="playhead"></div>
       </div>
     </div>
-    <div id="day-readout">Day 30 of 30 Â· Mar 29 ÃƒÂ¢Ã‚â‚¬Ã‚â€œ Apr 28</div>
+    <div id="day-readout">Day 30 of 30 · Mar 29 – Apr 28</div>
   </div>
 
   <!-- =================================================================
-       Drilling 3D scene overlay ÃƒÂ¢Ã‚â‚¬Ã‚â€ opens when a well row is clicked.
+       Drilling 3D scene overlay — opens when a well row is clicked.
        ================================================================= -->
   <div id="drilling-scene">
     <div id="drilling-canvas-wrap"></div>
 
     <div id="drilling-top-bar">
       <button id="drilling-back" title="Back to map">
-        <span class="arrow">â†Â</span><span>Map</span>
+        <span class="arrow">←</span><span>Map</span>
       </button>
       <div class="dt-title-block">
         <div class="dt-eyebrow">Directional Command Center</div>
         <div class="dt-title" id="dt-well-name">MD 22 03H</div>
-        <div class="dt-meta" id="dt-well-meta">North Reeves Cluster B Â· Pad MD 22 Â· Lateral 04</div>
+        <div class="dt-meta" id="dt-well-meta">North Reeves Cluster B · Pad MD 22 · Lateral 04</div>
       </div>
       <div id="dt-alerts-row">
-        <div class="dt-alert-chip critical"><span class="icon">ÃƒÂ¢Ã‚Å¡Ã‚Â </span><span>Collision Risk</span></div>
-        <div class="dt-alert-chip warn"><span class="icon">ÃƒÂ¢Ã‚â€”Ã‚â€ </span><span>Target Drift</span></div>
-        <div class="dt-alert-chip warn pulse"><span class="icon">ÃƒÂ¢Ã‚â€”Ã‚Â</span><span>Pressure Spike</span></div>
+        <div class="dt-alert-chip critical"><span class="icon">⚠</span><span>Collision Risk</span></div>
+        <div class="dt-alert-chip warn"><span class="icon">◆</span><span>Target Drift</span></div>
+        <div class="dt-alert-chip warn pulse"><span class="icon">●</span><span>Pressure Spike</span></div>
       </div>
       <div id="dt-status-pill"><span class="dot"></span><span>Drilling ahead</span></div>
     </div>
@@ -1779,15 +1779,15 @@
       <div class="dt-offset-label" style="left: 86%; top: 9%;">Offset Well<br><span>Falcon 24-03H</span></div>
       <div id="dt-spike-label" class="dt-spike-flag">
         <span class="ttl">Pressure Spike</span>
-        <span class="val">+0.4 ppg Â· last 200 ft</span>
+        <span class="val">+0.4 ppg · last 200 ft</span>
       </div>
     </div>
 
     <div id="dt-nav-controls">
       <button id="dt-reset-view" type="button" title="Return to default isometric view">
-        <span>ÃƒÂ¢Ã‚Å¸Ã‚Â²</span> Reset view
+        <span>⟲</span> Reset view
       </button>
-      <div id="dt-orbit-hint">Drag to orbit Â· Right-drag to pan Â· Wheel to zoom</div>
+      <div id="dt-orbit-hint">Drag to orbit · Right-drag to pan · Wheel to zoom</div>
     </div>
     <div id="dt-gizmo"></div>
 
@@ -1795,8 +1795,8 @@
       <div class="lbl">Bit position</div>
       <div class="val" id="dt-bit-md">10,847<span style="font-size:11px;color:#7a8597"> ft MD</span></div>
       <div class="row">
-        <div class="col"><div class="lbl">Inclination</div><div class="val" style="font-size:14px">88.4Ãƒâ€šÃ‚Â°</div></div>
-        <div class="col"><div class="lbl">Azimuth</div><div class="val" style="font-size:14px">N 84Ãƒâ€šÃ‚Â° E</div></div>
+        <div class="col"><div class="lbl">Inclination</div><div class="val" style="font-size:14px">88.4°</div></div>
+        <div class="col"><div class="lbl">Azimuth</div><div class="val" style="font-size:14px">N 84° E</div></div>
       </div>
       <div class="row">
         <div class="col"><div class="lbl">ROP</div><div class="val" style="font-size:14px">62 ft/hr</div></div>
@@ -1808,12 +1808,12 @@
       <div class="dt-panel-block">
         <div class="lbl">Target window</div>
         <div class="val good">In zone</div>
-        <div class="sub">7 ft below target top Â· 12 ft above target base</div>
+        <div class="sub">7 ft below target top · 12 ft above target base</div>
       </div>
       <div class="dt-panel-block">
         <div class="lbl">Anti-collision</div>
         <div class="val bad">CRITICAL</div>
-        <div class="sub">Falcon 24-03H Â· 38 ft separation Â· trending down</div>
+        <div class="sub">Falcon 24-03H · 38 ft separation · trending down</div>
       </div>
       <div class="dt-panel-block">
         <div class="lbl">Pore pressure</div>
@@ -1833,7 +1833,7 @@
             <circle class="dt-spark-pulse" cx="110" cy="2" r="3" fill="#f0b14e"/>
           </svg>
         </div>
-        <div class="sub"><span class="dt-spike-chip">ÃƒÂ¢Ã‚â€“Ã‚Â² +0.4 ppg</span> over last 200 ft</div>
+        <div class="sub"><span class="dt-spike-chip">▲ +0.4 ppg</span> over last 200 ft</div>
       </div>
       <div class="dt-panel-block">
         <div class="lbl">Projected TD</div>
@@ -1844,7 +1844,7 @@
   </div>
 
 <!-- =================================================================
-     Map / 2D logic ÃƒÂ¢Ã‚â‚¬Ã‚â€ MapLibre + deck.gl ColumnLayer for wells,
+     Map / 2D logic — MapLibre + deck.gl ColumnLayer for wells,
      plus the group inspector + pattern card flow.
      ================================================================= -->
 <script src="/twin-data.js"></script>
@@ -1923,7 +1923,7 @@
   let _wellId = 0;
   // 1) Pad centers on a coarse jittered grid inside each cluster
   //    (enforces minimum pad-to-pad spacing). Each pad is a small
-  //    row ÃƒÆ’Ã‚â€” col well grid ÃƒÂ¢Ã‚â‚¬Ã‚â€ matches how Permian pads actually look.
+  //    row × col well grid — matches how Permian pads actually look.
   for (const cl of CLUSTERS) {
     const cellMi = 0.60;                           // pad-to-pad spacing
     const slots = [];
@@ -1965,19 +1965,19 @@
       const padLng = cl.lng + (slot.dx + (Math.random() - 0.5) * jitterMi) / 54.6;
       const padLat = cl.lat + (slot.dy + (Math.random() - 0.5) * jitterMi) / 69;
 
-      // Pad orientation ÃƒÂ¢Ã‚â‚¬Ã‚â€ mostly N-S laterals (Permian convention),
+      // Pad orientation — mostly N-S laterals (Permian convention),
       // some E-W, plus small jitter so rows aren't axis-locked.
       const orient = (Math.random() < 0.7 ? 0 : Math.PI / 2)
                    + (Math.random() - 0.5) * 0.30;
 
-      // Grid size ÃƒÂ¢Ã‚â‚¬Ã‚â€ weighted toward SQUARE pads (rows ÃƒÂ¢Ã‚â€°Ã‚Ë† cols).
+      // Grid size — weighted toward SQUARE pads (rows ≈ cols).
       let rows, cols;
       const sizeR = Math.random();
-      if (sizeR < 0.15)      { rows = 1; cols = 1; }   //  1ÃƒÆ’Ã‚â€”1 ( 1 well)
-      else if (sizeR < 0.50) { rows = 2; cols = 2; }   //  2ÃƒÆ’Ã‚â€”2 ( 4 wells)
-      else if (sizeR < 0.80) { rows = 3; cols = 3; }   //  3ÃƒÆ’Ã‚â€”3 ( 9 wells)
-      else if (sizeR < 0.95) { rows = 4; cols = 4; }   //  4ÃƒÆ’Ã‚â€”4 (16 wells)
-      else                   { rows = 5; cols = 5; }   //  5ÃƒÆ’Ã‚â€”5 (25 wells)
+      if (sizeR < 0.15)      { rows = 1; cols = 1; }   //  1×1 ( 1 well)
+      else if (sizeR < 0.50) { rows = 2; cols = 2; }   //  2×2 ( 4 wells)
+      else if (sizeR < 0.80) { rows = 3; cols = 3; }   //  3×3 ( 9 wells)
+      else if (sizeR < 0.95) { rows = 4; cols = 4; }   //  4×4 (16 wells)
+      else                   { rows = 5; cols = 5; }   //  5×5 (25 wells)
       const wellSpacingDeg = 0.0030; // ~330 m centers
 
       const s = cl.sev;
@@ -2005,7 +2005,7 @@
       }
     }
   }
-  // 2) The "pad MD 22" ÃƒÂ¢Ã‚â‚¬Ã‚â€ the demonstrated North Reeves Cluster B group.
+  // 2) The "pad MD 22" — the demonstrated North Reeves Cluster B group.
   //    A 4x3 grid where padIndex 2 (MD 22 03H) is the outlier driving the
   //    inspector "diverging from pad behavior" insight.
   const NORTH_REEVES_PAD = [];
@@ -2065,7 +2065,7 @@
     recent_changes:      1.0
   };
   // Smooth multi-frequency wave per (well, day). Each well gets a unique
-  // phase so the field doesn't pulse in lockstep ÃƒÂ¢Ã‚â‚¬Ã‚â€ looks like real-world
+  // phase so the field doesn't pulse in lockstep — looks like real-world
   // independent variation as the timeline plays.
   function dayWave(d, day) {
     const phase = (d.id * 0.317) % (Math.PI * 2);
@@ -2178,7 +2178,7 @@
     refresh();
   }
 
-  // Cause breakdown ÃƒÂ¢Ã‚â‚¬Ã‚â€ synthetic mix.
+  // Cause breakdown — synthetic mix.
   const CAUSE_BREAKDOWN = [
     { id: 'surface_equipment',   pct: 16 },
     { id: 'artificial_lift',     pct: 20 },
@@ -2295,7 +2295,7 @@
       });
     });
   })();
-  // Cluster dropdown ÃƒÂ¢Ã‚â‚¬Ã‚â€ open/close + count badge
+  // Cluster dropdown — open/close + count badge
   (function initClusterDropdown() {
     const dd = document.getElementById('cluster-dd');
     const trigger = document.getElementById('cluster-dd-trigger');
@@ -2338,11 +2338,11 @@
       const wrap = document.getElementById('cluster-chips');
       const allHidden = hiddenClusters.size >= CLUSTERS.length;
       if (allHidden) {
-        // Check all â†â€™ clear the hidden set, mark every chip active
+        // Check all → clear the hidden set, mark every chip active
         hiddenClusters.clear();
         if (wrap) wrap.querySelectorAll('.filter-chip').forEach(c => c.classList.add('active'));
       } else {
-        // Uncheck all â†â€™ hide every cluster, deactivate all chips
+        // Uncheck all → hide every cluster, deactivate all chips
         for (const c of CLUSTERS) hiddenClusters.add(c.name);
         if (wrap) wrap.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
       }
@@ -2414,9 +2414,9 @@
       },
       summary: [
         'Coordinated production decline across pad MD 22 over the past 5 days.',
-        'MD 22 03H is the clear outlier ÃƒÂ¢Ã‚â‚¬Ã‚â€ simultaneous pressure instability and exception spikes.',
+        'MD 22 03H is the clear outlier — simultaneous pressure instability and exception spikes.',
         'Pattern suggests reservoir-side communication or a single-well completion issue, not a pad-wide surface problem.',
-        'Sensor confidence on 03H has slipped ~3 % in the same window ÃƒÂ¢Ã‚â‚¬Ã‚â€ verify telemetry before drawing engineering conclusions.'
+        'Sensor confidence on 03H has slipped ~3 % in the same window — verify telemetry before drawing engineering conclusions.'
       ]
     }
   };
@@ -2447,7 +2447,7 @@
       const cls = 'well-row' + (isAnomaly ? ' alert' : '');
       const id = w.padName || ('Well ' + w.id);
       const tail = isAnomaly
-        ? '<span class="alert-tag">ÃƒÂ¢Ã‚Å¡Ã‚Â  pressure spike</span>'
+        ? '<span class="alert-tag">⚠ pressure spike</span>'
         : '<span class="ok-dot"></span>';
       const insightHTML = isAnomaly
         ? `<div class="well-row-insight">
@@ -2509,7 +2509,7 @@
 
   function renderWellDetail(w) {
     wdTitle.textContent = w.padName || `Well #${w.id}`;
-    wdMeta.textContent  = w.cluster + (w.padLabel ? ` Â· ${w.padLabel}` : '');
+    wdMeta.textContent  = w.cluster + (w.padLabel ? ` · ${w.padLabel}` : '');
     const fmt = (id, val) => (METRICS_BY_ID[id] || METRICS[0]).fmt(val);
     wdProd.textContent  = fmt('production_variance', w.production_variance);
     wdProd.className    = 'val' + (w.production_variance < -1 ? ' bad' : w.production_variance > 1 ? ' good' : '');
@@ -2530,7 +2530,7 @@
     wdAnomFill.style.background = `rgb(${c[0]},${c[1]},${c[2]})`;
   }
 
-  // Flag set briefly when a well is freshly selected ÃƒÂ¢Ã‚â‚¬Ã‚â€ used by the
+  // Flag set briefly when a well is freshly selected — used by the
   // outside-click dismiss to avoid closing the card on the same click
   // that just opened it (or switched it to a different well).
   let _wellJustSelected = false;
@@ -2578,7 +2578,7 @@
     wdPanel.classList.remove('open');
     // Hide the 3-button action stack
     hideWellActionsMenu({ keepSelection: true });
-    // Intentionally do NOT reset map.setPadding here ÃƒÂ¢Ã‚â‚¬Ã‚â€ that would shift the
+    // Intentionally do NOT reset map.setPadding here — that would shift the
     // map's visual center the moment the card disappears. Leave the camera
     // exactly where it was; subsequent flyTo paths set their own padding.
     if (!(opts && opts.skipRefresh)) refresh();
@@ -2606,7 +2606,7 @@
   document.addEventListener('click', (e) => {
     // A drilling transition just started (the deck.gl onClick on a well
     // column fires earlier in the same click cycle and sets zoomingToWell).
-    // Don't run the outside-click dismiss while a transition is in flight ÃƒÂ¢Ã‚â‚¬Ã‚â€
+    // Don't run the outside-click dismiss while a transition is in flight —
     // that's the path that was clobbering the map state mid-animation and
     // making the well click look different from the card click.
     if (zoomingToWell) return;
@@ -2617,7 +2617,7 @@
     closeGroup();
   });
 
-  // ---- Pattern card â†â€™ investigate flow ----
+  // ---- Pattern card → investigate flow ----
   document.getElementById('pattern-card').addEventListener('click', () => {
     const group = GROUPS.north_reeves_b;
     const m = METRICS_BY_ID['production_variance'];
@@ -2662,27 +2662,27 @@
   let preTransitionMapState = null;
 
   // Single source of truth for entering the drilling scene from a well.
-  // The card click and the well-column click both route through this ÃƒÂ¢Ã‚â‚¬Ã‚â€
+  // The card click and the well-column click both route through this —
   // no branching, no per-source animation logic. The transition is
   // whatever `startMapZoomToWell` produces, which is the existing card
   // animation that already works.
   function enterDrillingForWell(w) {
     if (!w) return;
     const wellId = w.padName || ('Well #' + w.id);
-    const wellMeta = `${(selectedGroup && selectedGroup.name) || w.cluster} Â· 10,847 ft MD`;
+    const wellMeta = `${(selectedGroup && selectedGroup.name) || w.cluster} · 10,847 ft MD`;
     startMapZoomToWell(w, () => {
       if (typeof window.openDrilling === 'function') {
         window.openDrilling(wellId, wellMeta);
       }
     });
   }
-  // Map well-column click â†â€™ same path as the rail row click:
+  // Map well-column click → same path as the rail row click:
   // isolate the well visually + open the well-detail card.
   function handleWellColumnClick(w) {
     if (!w) return;
     selectWell(w);
   }
-  // Map well-column hover â†â€™ small tooltip with name + coordinates
+  // Map well-column hover → small tooltip with name + coordinates
   function handleWellColumnHover(info) {
     const tip = document.getElementById('well-hover-tip');
     if (!tip) return;
@@ -2692,7 +2692,7 @@
       const nameEl  = document.getElementById('wht-name');
       const coordEl = document.getElementById('wht-coord');
       if (nameEl)  nameEl.textContent  = name;
-      if (coordEl) coordEl.textContent = `${w.lat.toFixed(4)}Ãƒâ€šÃ‚Â°, ${w.lng.toFixed(4)}Ãƒâ€šÃ‚Â°`;
+      if (coordEl) coordEl.textContent = `${w.lat.toFixed(4)}°, ${w.lng.toFixed(4)}°`;
       tip.style.left = info.pixel[0] + 'px';
       tip.style.top  = info.pixel[1] + 'px';
       tip.classList.add('show');
@@ -2754,7 +2754,7 @@
     }
   }
   // (Map move/zoom listeners are registered AFTER `const map = ...`
-  // ÃƒÂ¢Ã‚â‚¬Ã‚â€ see `_attachWellActionsMapListeners()` further down.)
+  // — see `_attachWellActionsMapListeners()` further down.)
   function _attachWellActionsMapListeners() {
     map.on('move',  positionWellActions);
     map.on('zoom',  positionWellActions);
@@ -2906,7 +2906,7 @@
 
   function buildWellLayer(opacity) {
     // When a single well or a group is isolated, render only the *other*
-    // wells in this layer with depth-WRITE off ÃƒÂ¢Ã‚â‚¬Ã‚â€ they remain faintly visible
+    // wells in this layer with depth-WRITE off — they remain faintly visible
     // for context but never occlude the isolated wells (rendered separately
     // in top layers below).
     const isolating = selectedWellId != null || (groupWellIds && groupWellIds.size > 0);
@@ -2999,7 +2999,7 @@
         getFillColor: [255, 90, 90, 36],
         getElevation: ringHeight,
         material: false,
-        // Don't write depth ÃƒÂ¢Ã‚â‚¬Ã‚â€ otherwise this wide translucent column
+        // Don't write depth — otherwise this wide translucent column
         // hides the actual target well that renders inside it.
         parameters: { depthMask: false }
       })
@@ -3030,7 +3030,7 @@
   map.on('load', () => map.addControl(overlay));
 
   // Selected well rendered as its own column in a top-most layer with depth
-  // testing disabled ÃƒÂ¢Ã‚â‚¬Ã‚â€ guarantees it's never occluded by any other column.
+  // testing disabled — guarantees it's never occluded by any other column.
   function buildSelectedWellLayer() {
     if (selectedWellId == null) return null;
     const w = WELLS.find(x => x.id === selectedWellId);
@@ -3131,29 +3131,29 @@
 
   // ---- Timeline events ----
   const TIMELINE_EVENTS = [
-    { day: 2,  type: 'workover', label: 'ESP swap Â· Andrews',                detail: 'Restored 220 BOE/d' },
-    { day: 4,  type: 'failure',  label: 'Tubing leak Â· Reagan',              detail: '4 wells offline' },
-    { day: 6,  type: 'anomaly',  label: 'Pressure spike Â· Loving / Reeves',  detail: '6 wells flagged' },
-    { day: 8,  type: 'weather',  label: 'Storm cell Â· Pecos',                detail: 'Brief curtailment' },
-    { day: 9,  type: 'failure',  label: 'SCADA outage Â· Midland Basin core', detail: 'Telemetry restored after 38 min' },
-    { day: 11, type: 'workover', label: 'Valve replacement Â· Pecos',         detail: '+18 BOE/d recovered' },
-    { day: 12, type: 'workover', label: 'Pump retrofit Â· Andrews',           detail: '+60 BOE/d recovered' },
-    { day: 14, type: 'failure',  label: 'Rod parted Â· Crane',                detail: '1 well down Â· workover scheduled' },
-    { day: 15, type: 'workover', label: 'Lift switchover Â· Eddy County NM',  detail: 'Gas-lift to ESP, +90 BOE/d' },
-    { day: 16, type: 'weather',  label: 'Cold front Â· NM',                   detail: 'Brief curtailment, mostly recovered' },
-    { day: 17, type: 'anomaly',  label: 'Methane emission flagged Â· Pecos',  detail: '2 wells under monitoring' },
-    { day: 18, type: 'failure',  label: 'ESP failure Â· Lea County NM',       detail: '6 wells offline Â· pump replacement scheduled' },
-    { day: 19, type: 'anomaly',  label: 'GOR shift detected Â· Martin / Howard', detail: '8 wells trending higher' },
-    { day: 20, type: 'workover', label: 'Pump optimization Â· Reagan',        detail: '+45 BOE/d recovered' },
-    { day: 21, type: 'workover', label: 'Tubing leak repair Â· Glasscock',    detail: '2 wells back online' },
-    { day: 22, type: 'anomaly',  label: 'Pressure spike Â· Ward / Winkler',   detail: '12 wells flagged for review' },
-    { day: 23, type: 'failure',  label: 'Compressor outage Â· Andrews',       detail: '8 wells offline Â· 14 hr downtime' },
-    { day: 24, type: 'failure',  label: 'Power outage Â· Sterling / Mitchell',detail: 'Grid event Â· ~6 hr curtailment' },
-    { day: 25, type: 'workover', label: 'Re-frac complete Â· Loving / Reeves',detail: '+220 BOE/d added' },
-    { day: 26, type: 'anomaly',  label: 'Bearing wear flagged Â· Borden',     detail: 'Vibration sensor trending high' },
-    { day: 27, type: 'anomaly',  label: 'Casing leak Â· Pecos',               detail: '2 wells under review' },
-    { day: 28, type: 'workover', label: 'Cluster valve service Â· Gaines',    detail: 'Routine; no production loss' },
-    { day: 29, type: 'failure',  label: 'Pipeline trip Â· Eddy County NM',    detail: '14 wells curtailed' }
+    { day: 2,  type: 'workover', label: 'ESP swap · Andrews',                detail: 'Restored 220 BOE/d' },
+    { day: 4,  type: 'failure',  label: 'Tubing leak · Reagan',              detail: '4 wells offline' },
+    { day: 6,  type: 'anomaly',  label: 'Pressure spike · Loving / Reeves',  detail: '6 wells flagged' },
+    { day: 8,  type: 'weather',  label: 'Storm cell · Pecos',                detail: 'Brief curtailment' },
+    { day: 9,  type: 'failure',  label: 'SCADA outage · Midland Basin core', detail: 'Telemetry restored after 38 min' },
+    { day: 11, type: 'workover', label: 'Valve replacement · Pecos',         detail: '+18 BOE/d recovered' },
+    { day: 12, type: 'workover', label: 'Pump retrofit · Andrews',           detail: '+60 BOE/d recovered' },
+    { day: 14, type: 'failure',  label: 'Rod parted · Crane',                detail: '1 well down · workover scheduled' },
+    { day: 15, type: 'workover', label: 'Lift switchover · Eddy County NM',  detail: 'Gas-lift to ESP, +90 BOE/d' },
+    { day: 16, type: 'weather',  label: 'Cold front · NM',                   detail: 'Brief curtailment, mostly recovered' },
+    { day: 17, type: 'anomaly',  label: 'Methane emission flagged · Pecos',  detail: '2 wells under monitoring' },
+    { day: 18, type: 'failure',  label: 'ESP failure · Lea County NM',       detail: '6 wells offline · pump replacement scheduled' },
+    { day: 19, type: 'anomaly',  label: 'GOR shift detected · Martin / Howard', detail: '8 wells trending higher' },
+    { day: 20, type: 'workover', label: 'Pump optimization · Reagan',        detail: '+45 BOE/d recovered' },
+    { day: 21, type: 'workover', label: 'Tubing leak repair · Glasscock',    detail: '2 wells back online' },
+    { day: 22, type: 'anomaly',  label: 'Pressure spike · Ward / Winkler',   detail: '12 wells flagged for review' },
+    { day: 23, type: 'failure',  label: 'Compressor outage · Andrews',       detail: '8 wells offline · 14 hr downtime' },
+    { day: 24, type: 'failure',  label: 'Power outage · Sterling / Mitchell',detail: 'Grid event · ~6 hr curtailment' },
+    { day: 25, type: 'workover', label: 'Re-frac complete · Loving / Reeves',detail: '+220 BOE/d added' },
+    { day: 26, type: 'anomaly',  label: 'Bearing wear flagged · Borden',     detail: 'Vibration sensor trending high' },
+    { day: 27, type: 'anomaly',  label: 'Casing leak · Pecos',               detail: '2 wells under review' },
+    { day: 28, type: 'workover', label: 'Cluster valve service · Gaines',    detail: 'Routine; no production loss' },
+    { day: 29, type: 'failure',  label: 'Pipeline trip · Eddy County NM',    detail: '14 wells curtailed' }
   ];
 
   // Surgical data splice: replace TIMELINE_EVENTS with seeded data when available
@@ -3169,12 +3169,12 @@
       const m = document.createElement('div');
       m.className = 'tl-marker ' + e.type;
       m.style.left = `${(e.day / TOTAL_DAYS) * 100}%`;
-      m.title = `${e.label} Â· ${dayLabel(e.day)}`;
+      m.title = `${e.label} · ${dayLabel(e.day)}`;
       m.innerHTML = `
         <div class="tip">
           <div class="tip-title">${e.label}</div>
           <div class="tip-detail">${e.detail}</div>
-          <div class="tip-day">${dayLabel(e.day)} Â· day ${e.day + 1} of ${TOTAL_DAYS}</div>
+          <div class="tip-day">${dayLabel(e.day)} · day ${e.day + 1} of ${TOTAL_DAYS}</div>
         </div>`;
       m.onclick = () => setDay(e.day);
       el.appendChild(m);
@@ -3185,7 +3185,7 @@
     const ph = document.getElementById('playhead');
     if (ph) ph.style.left = `${(day / TOTAL_DAYS) * 100}%`;
     const out = document.getElementById('day-readout');
-    if (out) out.textContent = `Day ${day} of ${TOTAL_DAYS} Â· ${dayLabel(0)} ÃƒÂ¢Ã‚â‚¬Ã‚â€œ ${dayLabel(TOTAL_DAYS - 1)}`;
+    if (out) out.textContent = `Day ${day} of ${TOTAL_DAYS} · ${dayLabel(0)} – ${dayLabel(TOTAL_DAYS - 1)}`;
     refresh();
     renderActions();
     if (selectedGroup) renderInspector();
@@ -3228,14 +3228,14 @@
     // If at the end, restart from 0; otherwise resume from current day.
     playStartDay = currentDay >= TOTAL_DAYS ? 0 : currentDay;
     playT0 = performance.now();
-    playBtn.textContent = 'ÃƒÂ¢Ã‚ÂÃ‚Å¡ÃƒÂ¢Ã‚ÂÃ‚Å¡';
+    playBtn.textContent = '❚❚';
     playRaf = requestAnimationFrame(tickPlay);
   }
   function stopPlay() {
     if (playRaf) cancelAnimationFrame(playRaf);
     playRaf = null;
     playT0 = null;
-    playBtn.textContent = 'ÃƒÂ¢Ã‚â€“Ã‚Â¶';
+    playBtn.textContent = '▶';
   }
   playBtn.addEventListener('click', () => {
     if (isPlaying()) stopPlay(); else startPlay();
@@ -3263,7 +3263,7 @@
 </script>
 
 <!-- =================================================================
-     Drilling 3D scene ÃƒÂ¢Ã‚â‚¬Ã‚â€ three.js (module)
+     Drilling 3D scene — three.js (module)
      ================================================================= -->
 <script type="module">
   import * as THREE from 'three';
@@ -3390,7 +3390,7 @@
   }
 
   // ====================================================================
-  // CROSS-SECTION ÃƒÂ¢Ã‚â‚¬Ã‚â€ strata canvas + displaced plane
+  // CROSS-SECTION — strata canvas + displaced plane
   // ====================================================================
   function buildCrossSection() {
     strataTexture = new THREE.CanvasTexture(makeStrataCanvas());
@@ -3425,7 +3425,7 @@
   }
 
   // ====================================================================
-  // SURFACE TOP ÃƒÂ¢Ã‚â‚¬Ã‚â€ moonlit terrain
+  // SURFACE TOP — moonlit terrain
   // ====================================================================
   function buildSurfaceTop() {
     const tex = new THREE.CanvasTexture(makeTerrainCanvas());
@@ -3622,7 +3622,7 @@
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
     }
 
-    // Sparser rectangular fragments ÃƒÂ¢Ã‚â‚¬Ã‚â€ fewer streaks, larger gaps between
+    // Sparser rectangular fragments — fewer streaks, larger gaps between
     // them, so each band reads as a solid formation rather than a sea
     // of parallel marks.
     const fragments = Math.floor(layerH * 0.45);
@@ -3639,7 +3639,7 @@
       ctx.fillRect(xx, yy, ww, hh);
     }
 
-    // Far fewer + shorter bedding lines (sub-1ÃƒÆ’Ã‚â€” layerH instead of 3.4ÃƒÆ’Ã‚â€”).
+    // Far fewer + shorter bedding lines (sub-1× layerH instead of 3.4×).
     // Reads as occasional bedding hints, not woodgrain streaks.
     const numStriations = Math.floor(layerH * 0.85);
     for (let i = 0; i < numStriations; i++) {
@@ -3665,7 +3665,7 @@
     }
   }
 
-  // Offset wells ÃƒÂ¢Ã‚â‚¬Ã‚â€ three subtle gray ghost paths
+  // Offset wells — three subtle gray ghost paths
   function buildOffsetWells() {
     const offsets = [
       { topX: -395, midX: -370, botX: -350 },
@@ -3688,7 +3688,7 @@
     }
   }
 
-  // Well paths ÃƒÂ¢Ã‚â‚¬Ã‚â€ planned cyan dashed, actual glowing green tube,
+  // Well paths — planned cyan dashed, actual glowing green tube,
   // projected orange dotted.
   const PLANNED_PTS = [
     [0, 230, 0], [0, 80, 0], [-2, -30, 0], [-6, -100, 0],
@@ -3779,7 +3779,7 @@
     }
   }
 
-  // Pressure-spike marker ÃƒÂ¢Ã‚â‚¬Ã‚â€ pulsing amber rings + glow placed ~200 ft above
+  // Pressure-spike marker — pulsing amber rings + glow placed ~200 ft above
   // the bit along the actual wellbore curve. Mirrors the bottom-panel
   // "Spike +0.4 ppg over last 200 ft" copy and the top-bar warn chip.
   function buildPressureSpikeMarker() {
@@ -3903,7 +3903,7 @@
       const pulse = 0.78 + Math.sin(t * 1.6 - r.phase * Math.PI) * 0.22;
       r.line.material.opacity = r.baseOpacity * pulse;
     }
-    // Pressure-spike pulse ÃƒÂ¢Ã‚â‚¬Ã‚â€ amber, slightly faster cadence than collision rings
+    // Pressure-spike pulse — amber, slightly faster cadence than collision rings
     for (const r of spikeRings) {
       const phase = t * 2.2 - r.phase * Math.PI;
       r.line.material.opacity = r.baseOpacity * (0.55 + Math.sin(phase) * 0.45);
@@ -3942,7 +3942,7 @@
     if (!initialized) init();
     else onResize();
     document.getElementById('dt-well-name').textContent = wellName || 'MD 22 03H';
-    document.getElementById('dt-well-meta').textContent = wellMeta || 'Loving / Reeves Â· 10,847 ft MD';
+    document.getElementById('dt-well-meta').textContent = wellMeta || 'Loving / Reeves · 10,847 ft MD';
     overlay.classList.add('crossfading');
     startIntroTransition();
   };
@@ -4039,7 +4039,7 @@
       // Hand the map fly-back to MapLibre.
       const mapEl = document.getElementById('map');
       const mapInstance = window._maplibreMap || null;
-      // The map flyTo here is best-effort ÃƒÂ¢Ã‚â‚¬Ã‚â€ the caller's map is the
+      // The map flyTo here is best-effort — the caller's map is the
       // one in the first script; we let the bar regrowth animate via
       // _setZoomToT and let MapLibre's flyTo come from the first script.
       // Longer + ease-out so the camera coasts to a soft stop on the
@@ -4060,7 +4060,7 @@
         const e = performance.now() - start;
         const p = Math.min(e / FLY_DUR, 1);
         // Quartic falloff so bar regrowth eases even more softly into
-        // final height ÃƒÂ¢Ã‚â‚¬Ã‚â€ derivative at p=1 is 0 (no last-frame snap).
+        // final height — derivative at p=1 is 0 (no last-frame snap).
         window._setZoomToT(Math.pow(1 - p, 4));
         if (p < 1) requestAnimationFrame(step);
         else {
@@ -4095,7 +4095,7 @@
 </script>
 
 <!-- =================================================================
-     WELL LOG CORRELATION MODAL ÃƒÂ¢Ã‚â‚¬Ã‚â€ sample geoscience case study.
+     WELL LOG CORRELATION MODAL — sample geoscience case study.
      Self-contained: dataset, SVG rendering, hover sync.
      ================================================================= -->
 <div id="wlc-modal" role="dialog" aria-modal="true" aria-label="Well Log Correlation">
@@ -4105,7 +4105,7 @@
         <div class="wlc-eyebrow">Well Log Correlation</div>
         <div class="wlc-title-row">
           <div class="wlc-title">AASTRA Discovery</div>
-          <div class="wlc-meta">Browse Basin Â· AASTRA 3D PS</div>
+          <div class="wlc-meta">Browse Basin · AASTRA 3D PS</div>
         </div>
       </div>
       <div class="wlc-toggles" role="group" aria-label="Curve toggles">
@@ -4117,11 +4117,11 @@
       </div>
       <div class="wlc-actions">
         <button class="wlc-cta" id="wlc-cta" type="button">
-          <span style="font-size:13px;line-height:1">ÃƒÂ¢Ã‚Å’Ã‚â€“</span>
+          <span style="font-size:13px;line-height:1">⌖</span>
           <span>Sync to 3D Scene</span>
         </button>
-        <button class="wlc-icon-btn" id="wlc-expand" type="button" aria-label="Expand" title="Expand">ÃƒÂ¢Ã‚Â¤Ã‚Â¢</button>
-        <button class="wlc-icon-btn" id="wlc-close" type="button" aria-label="Close" title="Close">ÃƒÆ’Ã‚â€”</button>
+        <button class="wlc-icon-btn" id="wlc-expand" type="button" aria-label="Expand" title="Expand">⤢</button>
+        <button class="wlc-icon-btn" id="wlc-close" type="button" aria-label="Close" title="Close">×</button>
       </div>
     </div>
     <div class="wlc-body">
@@ -4131,7 +4131,7 @@
           <div class="wlc-tracks-head">
             <div class="lhs">
               <span>Correlation Section</span>
-              <span class="scale-marker">3 wells Â· 4 horizons</span>
+              <span class="scale-marker">3 wells · 4 horizons</span>
             </div>
             <div>Depth in metres MD</div>
           </div>
@@ -4141,10 +4141,10 @@
         <div class="wlc-left-view wlc-graph-view">
           <div class="wlc-graph-head">
             <button id="wlc-back-to-tracks" type="button" class="wlc-back-btn" aria-label="Back to tracks">
-              <span class="arrow">â†Â</span><span>Back to Tracks</span>
+              <span class="arrow">←</span><span>Back to Tracks</span>
             </button>
             <div class="title-block">
-              <div class="eyebrow">Knowledge Graph Â· Cognify</div>
+              <div class="eyebrow">Knowledge Graph · Cognify</div>
               <div class="ttl">Hidden Connections</div>
             </div>
             <div class="stats">
@@ -4152,13 +4152,13 @@
               <span><b id="kg-stat-edges">0</b> relationships</span>
               <span><b id="kg-stat-types">0</b> types</span>
             </div>
-            <button class="wlc-icon-btn" id="kg-fit" type="button" aria-label="Re-center" title="Re-center view">ÃƒÂ¢Ã‚Å Ã‚â„¢</button>
+            <button class="wlc-icon-btn" id="kg-fit" type="button" aria-label="Re-center" title="Re-center view">⊙</button>
           </div>
           <div class="wlc-graph-svg-wrap">
             <svg id="kg-svg" preserveAspectRatio="xMidYMid meet"></svg>
             <div class="kg-search">
-              <span style="font-size:12px;color:var(--muted)">ÃƒÂ¢Ã‚Å’Ã‚â€¢</span>
-              <input class="kg-search-input" id="kg-search" placeholder="Search entitiesÃƒÂ¢Ã‚â‚¬Ã‚Â¦" />
+              <span style="font-size:12px;color:var(--muted)">⌕</span>
+              <input class="kg-search-input" id="kg-search" placeholder="Search entities…" />
             </div>
             <div class="kg-legend">
               <div class="ttl">Graph Layers</div>
@@ -4183,7 +4183,7 @@
       <div class="wlc-right">
         <div class="wlc-panel">
           <div class="wlc-panel-head">
-            <span class="ttl">Cross plot Â· CALI vs GR</span>
+            <span class="ttl">Cross plot · CALI vs GR</span>
             <div class="wlc-xp-modes" role="group" aria-label="Cross-plot view">
               <button type="button" class="xp-mode-btn active" data-mode="all">All</button>
               <button type="button" class="xp-mode-btn" data-mode="featured">Featured</button>
@@ -4191,14 +4191,14 @@
           </div>
           <div id="wlc-xp-svg-wrap"></div>
           <div class="wlc-xp-status" id="wlc-xp-status">
-            <span class="hint">Drag to box-select Â· click to clear</span>
+            <span class="hint">Drag to box-select · click to clear</span>
             <span class="sel" id="wlc-xp-sel-count" hidden></span>
             <button type="button" class="xp-reset-btn" id="wlc-xp-reset" hidden>Reset</button>
           </div>
         </div>
         <div class="wlc-panel">
           <div class="wlc-panel-head">
-            <span class="ttl">Zephyros-1 Â· Header Metadata</span>
+            <span class="ttl">Zephyros-1 · Header Metadata</span>
           </div>
           <div id="wlc-meta-grid" class="wlc-meta-grid"></div>
         </div>
@@ -4216,7 +4216,7 @@
 
 <script>
 /* ============================================================
-   WELL LOG CORRELATION ÃƒÂ¢Ã‚â‚¬Ã‚â€ vanilla-JS module.
+   WELL LOG CORRELATION — vanilla-JS module.
    Self-contained: synthetic dataset (IIFE), SVG rendering, hover.
    To swap in real data later, replace the IIFE with a literal
    WELL_LOG_CASE_STUDY object matching the same schema.
@@ -4244,7 +4244,7 @@
   };
 
   // ---- Source dataset (real-shaped; provided by user) ------------------
-  // Per-depth GR/CALI/density/resistivity curves are NOT in this source ÃƒÂ¢Ã‚â‚¬Ã‚â€
+  // Per-depth GR/CALI/density/resistivity curves are NOT in this source —
   // we synthesise them deterministically from the formation tops + the
   // interpretationZones GR/CALI bands so each sample falls inside the band
   // its zone defines. Cross-plot points are used verbatim.
@@ -4259,12 +4259,12 @@
     },
     wells: [
       { id: "torosa-1",   name: "Torosa-1",   surfaceX: 405186.52, surfaceY: 8480280.32,
-        surfaceLatitude: "13Ãƒâ€šÃ‚Â°44'42.729\" S", surfaceLongitude: "122Ãƒâ€šÃ‚Â°07'22.839\" E",
+        surfaceLatitude: "13°44'42.729\" S", surfaceLongitude: "122°07'22.839\" E",
         kbMeters: 21.8, waterDepthMeters: 524.8, totalDepthMDMeters: 5375.0,
         curves: ["GR","CALI","Density","Resistivity"],
         gammaRayRangeGAPI: [0,150], caliperRangeInches: [8,14] },
       { id: "zephyros-1", name: "Zephyros-1", surfaceX: 405186.52, surfaceY: 8480280.32,
-        surfaceLatitude: "13Ãƒâ€šÃ‚Â°44'42.729\" S", surfaceLongitude: "122Ãƒâ€šÃ‚Â°07'22.839\" E",
+        surfaceLatitude: "13°44'42.729\" S", surfaceLongitude: "122°07'22.839\" E",
         kbMeters: 21.8, waterDepthMeters: 524.8, totalDepthMDMeters: 5375.0,
         curves: ["GR","CALI","Density","Resistivity"],
         gammaRayRangeGAPI: [0,150], caliperRangeInches: [8,14] },
@@ -4397,17 +4397,17 @@
         const zone = zoneAtDepth(d);
         const grR  = ZONE_RANGES[zone].gr;
         const caR  = ZONE_RANGES[zone].cali;
-        // GR ÃƒÂ¢Ã‚â‚¬Ã‚â€ sample inside the zone band, with light noise + drift
+        // GR — sample inside the zone band, with light noise + drift
         const grBase = (grR[0] + grR[1]) / 2, grHalf = (grR[1] - grR[0]) / 2;
         let grVal = grBase + (rand() - 0.5) * 2 * grHalf * 0.85 + Math.sin(d * 0.04) * 3;
         grVal = Math.max(8, Math.min(150, grVal));
         gr.push(+grVal.toFixed(1));
-        // CALI ÃƒÂ¢Ã‚â‚¬Ã‚â€ narrower band, occasional shale washout spikes
+        // CALI — narrower band, occasional shale washout spikes
         const caBase = (caR[0] + caR[1]) / 2, caHalf = (caR[1] - caR[0]) / 2;
         let caVal = caBase + (rand() - 0.5) * 2 * caHalf * 0.7;
         if (zone === 'high-shale-non-reservoir' && rand() < 0.10) caVal += 1.4 + rand() * 2.0;
         cali.push(+caVal.toFixed(2));
-        // Density / resistivity ÃƒÂ¢Ã‚â‚¬Ã‚â€ synthesised per zone (not in source data)
+        // Density / resistivity — synthesised per zone (not in source data)
         const baseRho   = zone === 'clean-reservoir-sand' ? 2.27 : zone === 'shaly-sand-transition' ? 2.40 : 2.50;
         const baseRtLog = zone === 'clean-reservoir-sand' ? 1.40 : zone === 'shaly-sand-transition' ? 0.85 : 0.45;
         density.push(+(baseRho + (rand() - 0.5) * 0.08).toFixed(2));
@@ -4614,7 +4614,7 @@
       x: x0 + TRACK_TOTAL / 2, y: 16,
       'text-anchor': 'middle', class: 'well-name'
     }));
-    g.appendChild(tx(`MD ${w.depthStart}ÃƒÂ¢Ã‚â‚¬Ã‚â€œ${w.depthEnd} m`, {
+    g.appendChild(tx(`MD ${w.depthStart}–${w.depthEnd} m`, {
       x: x0 + TRACK_TOTAL / 2, y: 30,
       'text-anchor': 'middle', class: 'well-sub'
     }));
@@ -4693,7 +4693,7 @@
       'text-anchor': 'end', class: 'axis-tick'
     }));
 
-    // Lithology blocks ÃƒÂ¢Ã‚â‚¬Ã‚â€ built ONLY from picks the well actually has.
+    // Lithology blocks — built ONLY from picks the well actually has.
     // The pattern of each interval is chosen by the formation that bounds
     // its top (overburden above Jamieson, marl above Plover Top, etc.).
     const lithoOrder = ['jamieson-te2-fm', 'plover-fm-top', 'plover-fm-sand', 'plover-fm-base'];
@@ -4725,7 +4725,7 @@
       }));
     }
 
-    // Hover marker (depth rule) ÃƒÂ¢Ã‚â‚¬Ã‚â€ used by cross-plot sync
+    // Hover marker (depth rule) — used by cross-plot sync
     const rule = el('line', {
       x1: xGR - 4, x2: xLitho + TRACK_W_LITHO + 4,
       y1: -100, y2: -100, class: 'depth-rule'
@@ -4733,7 +4733,7 @@
     rule.setAttribute('id', `wlc-rule-${w.name}`);
     g.appendChild(rule);
 
-    // Formation top markers (last â†â€™ on top). Only draw if this well has a pick.
+    // Formation top markers (last → on top). Only draw if this well has a pick.
     for (const fm of FORMATIONS) {
       const d = w.formationTops[fm.id];
       if (d == null) continue;
@@ -4765,7 +4765,7 @@
 
   // ---- Cross-plot SVG --------------------------------------------------
   // Continuous warm GR colormap for the dense cloud (matches the reference
-  // crossplot ÃƒÂ¢Ã‚â‚¬Ã‚â€ dark espresso at low GR through cream at high GR), so the
+  // crossplot — dark espresso at low GR through cream at high GR), so the
   // background reads as one organic gradient instead of three banded zones.
   function denseGrColor(gr) {
     const t = Math.max(0, Math.min(1, gr / 150));
@@ -4790,7 +4790,7 @@
     const W = 320, H = 250;
     const PL = 50, PR = 10, PT = 12, PB = 44;
     const plotW = W - PL - PR, plotH = H - PT - PB;
-    // Axis ranges chosen to mirror the reference crossplot (CALI 0ÃƒÂ¢Ã‚â‚¬Ã‚â€œ15, GR 0ÃƒÂ¢Ã‚â‚¬Ã‚â€œ150)
+    // Axis ranges chosen to mirror the reference crossplot (CALI 0–15, GR 0–150)
     const xMin = 0, xMax = 15, yMin = 0, yMax = 150;
     const xPx = c => PL + ((c - xMin) / (xMax - xMin)) * plotW;
     const yPx = g => PT + (1 - (g - yMin) / (yMax - yMin)) * plotH;
@@ -4809,10 +4809,10 @@
     defs.appendChild(clip);
     svg.appendChild(defs);
 
-    // Static layer (frame, axis labels, axis title) ÃƒÂ¢Ã‚â‚¬Ã‚â€ does NOT zoom.
+    // Static layer (frame, axis labels, axis title) — does NOT zoom.
     svg.appendChild(el('rect', { x: PL, y: PT, width: plotW, height: plotH, class: 'xp-frame' }));
 
-    // Zoom layer (grid, data, brush) ÃƒÂ¢Ã‚â‚¬Ã‚â€ scales/translates with the wheel.
+    // Zoom layer (grid, data, brush) — scales/translates with the wheel.
     const zoomG = el('g', { class: 'xp-zoom-g', 'clip-path': `url(#${clipId})` });
 
     [50, 100].forEach(gv => {
@@ -4848,7 +4848,7 @@
       x: xRef + 3, y: PT + 11, class: 'xp-tick', fill: 'rgba(51,216,255,0.55)'
     }));
 
-    // Dense background cloud ÃƒÂ¢Ã‚â‚¬Ã‚â€ coloured by a continuous warm GR ramp
+    // Dense background cloud — coloured by a continuous warm GR ramp
     // (matches the reference crossplot). Built from the per-depth curve
     // samples with multiple Gaussian-jittered duplicates so the cluster
     // reads as one blended blob, plus shale washout extensions and a few
@@ -4871,7 +4871,7 @@
         for (let j = 0; j < JITTERS_PER_SAMPLE; j++) {
           let cali = baseCa + gauss() * 0.32;       // wider CALI spread
           let gr   = baseGr + gauss() * 8;
-          // Aggressive shale washouts ÃƒÂ¢Ã‚â‚¬Ã‚â€ lengthen the rightward tail
+          // Aggressive shale washouts — lengthen the rightward tail
           if (baseGr > 85 && rcloud() < 0.22) {
             cali += 1.0 + rcloud() * 2.6;
           }
@@ -4895,18 +4895,18 @@
       const gr   = 85 + rcloud() * 50;
       const zone = gr < 85 ? 'shaly-sand-transition' : 'high-shale-non-reservoir';
       dense.push({
-        well: 'ÃƒÂ¢Ã‚â‚¬Ã‚â€', depth: 0,
+        well: '—', depth: 0,
         gr, cali, density: 2.5, resistivity: 1.5, zone
       });
     }
 
     dense.forEach((p, i) => {
       // Per-point size variation: skewed toward smaller dots with the
-      // occasional larger one ÃƒÂ¢Ã‚â‚¬Ã‚â€ gives the cloud an organic, painterly
+      // occasional larger one — gives the cloud an organic, painterly
       // texture instead of a uniform speckle. Smaller dots get slightly
       // higher opacity so the field reads as layered density.
       const u = rcloud();
-      const r = 0.7 + Math.pow(u, 1.8) * 2.6;          // ~0.7 â†â€™ 3.3, biased small
+      const r = 0.7 + Math.pow(u, 1.8) * 2.6;          // ~0.7 → 3.3, biased small
       const op = 0.40 + (1 - Math.pow(u, 0.7)) * 0.40; // smaller = more opaque
       denseG.appendChild(el('circle', {
         cx: xPx(p.cali), cy: yPx(p.gr), r,
@@ -4918,7 +4918,7 @@
     // Stash for brush + reset wiring (read by wireInteractions).
     WELL_LOG_CASE_STUDY.crossPlot._dense = dense;
 
-    // Featured points ÃƒÂ¢Ã‚â‚¬Ã‚â€ the curated 18 from the source dataset, drawn on top.
+    // Featured points — the curated 18 from the source dataset, drawn on top.
     const ptsG = el('g', { class: 'xp-points-g' });
     WELL_LOG_CASE_STUDY.crossPlot.points.forEach((p, i) => {
       ptsG.appendChild(el('circle', {
@@ -4933,7 +4933,7 @@
     // Mount the zoom group AFTER its contents so they get clipped properly
     svg.appendChild(zoomG);
 
-    // Brush layer ÃƒÂ¢Ã‚â‚¬Ã‚â€ sits OUTSIDE the zoom group so the rectangle is drawn
+    // Brush layer — sits OUTSIDE the zoom group so the rectangle is drawn
     // in screen-space; brush math compares each point's transformed pos.
     const brushG = el('g', { class: 'xp-brush-g' });
     svg.appendChild(brushG);
@@ -4950,8 +4950,8 @@
       ['Operator',        m.operator],
       ['Surface X',       m.surfaceX.toFixed(2) + ' m'],
       ['Surface Y',       m.surfaceY.toFixed(2) + ' m'],
-      ['Surface Lat',     typeof m.surfaceLatitude  === 'string' ? m.surfaceLatitude  : (m.surfaceLatitude.toFixed(4)  + 'Ãƒâ€šÃ‚Â°')],
-      ['Surface Lon',     typeof m.surfaceLongitude === 'string' ? m.surfaceLongitude : (m.surfaceLongitude.toFixed(4) + 'Ãƒâ€šÃ‚Â°')],
+      ['Surface Lat',     typeof m.surfaceLatitude  === 'string' ? m.surfaceLatitude  : (m.surfaceLatitude.toFixed(4)  + '°')],
+      ['Surface Lon',     typeof m.surfaceLongitude === 'string' ? m.surfaceLongitude : (m.surfaceLongitude.toFixed(4) + '°')],
       ['KB',              m.kb.toFixed(1) + ' m'],
       ['Permanent Datum', m.permanentDatum],
       ['Water Depth',     m.waterDepth.toFixed(1) + ' m'],
@@ -5047,11 +5047,11 @@
       node.addEventListener('mouseenter', () => setHoverPoint(i));
       node.addEventListener('mousemove', e => {
         tip.innerHTML =
-          `<div class="head">${p.well} Â· ${p.depth.toFixed(0)} m</div>` +
+          `<div class="head">${p.well} · ${p.depth.toFixed(0)} m</div>` +
           `<div class="row"><span class="key">GR</span><span class="val">${p.gr.toFixed(1)} gAPI</span></div>` +
           `<div class="row"><span class="key">CALI</span><span class="val">${p.cali.toFixed(2)} in</span></div>` +
           `<div class="row"><span class="key">Density</span><span class="val">${p.density.toFixed(2)} g/cc</span></div>` +
-          `<div class="row"><span class="key">Resistivity</span><span class="val">${p.resistivity.toFixed(2)} ÃƒÅ½Ã‚Â©Â·m</span></div>` +
+          `<div class="row"><span class="key">Resistivity</span><span class="val">${p.resistivity.toFixed(2)} Ω·m</span></div>` +
           `<div class="row"><span class="key">Zone</span><span class="val" style="color:${ZONE_COLOR[p.zone]}">${ZONE_LABEL[p.zone]}</span></div>`;
         tip.style.display = 'block';
         const r = tip.getBoundingClientRect();
@@ -5175,9 +5175,9 @@
         const z = counts.byZone;
         statusSel.innerHTML =
           `<b>${counts.total}</b> selected ` +
-          `<span style="color:${ZONE_COLOR['clean-reservoir-sand']}">ÃƒÂ¢Ã‚â€”Ã‚Â</span> ${z['clean-reservoir-sand']} ` +
-          `<span style="color:${ZONE_COLOR['shaly-sand-transition']}">ÃƒÂ¢Ã‚â€”Ã‚Â</span> ${z['shaly-sand-transition']} ` +
-          `<span style="color:${ZONE_COLOR['high-shale-non-reservoir']}">ÃƒÂ¢Ã‚â€”Ã‚Â</span> ${z['high-shale-non-reservoir']}`;
+          `<span style="color:${ZONE_COLOR['clean-reservoir-sand']}">●</span> ${z['clean-reservoir-sand']} ` +
+          `<span style="color:${ZONE_COLOR['shaly-sand-transition']}">●</span> ${z['shaly-sand-transition']} ` +
+          `<span style="color:${ZONE_COLOR['high-shale-non-reservoir']}">●</span> ${z['high-shale-non-reservoir']}`;
       }
       if (resetBtn) resetBtn.hidden = false;
     }
@@ -5218,7 +5218,7 @@
         const w = parseFloat(brushEl.getAttribute('width'))  || 0;
         const h = parseFloat(brushEl.getAttribute('height')) || 0;
         if (w < 4 || h < 4) {
-          // Treat as a tap â†â€™ clear any active selection
+          // Treat as a tap → clear any active selection
           clearBrushSelection();
         } else {
           applyBrushSelection({
@@ -5254,7 +5254,7 @@
 
     if (resetBtn) resetBtn.addEventListener('click', clearBrushSelection);
 
-    // ---- Dense-point hover + click â†â€™ tooltip + KG focus ---------------
+    // ---- Dense-point hover + click → tooltip + KG focus ---------------
     // Featured points already have per-node listeners. Use delegation for
     // the ~5,000 dense particles so every dot feels interactive.
     if (xpSvg) {
@@ -5268,11 +5268,11 @@
         t.classList.add('hovered');
         if (tooltipEl) {
           tooltipEl.innerHTML =
-            `<div class="head">${p.well || 'sample'}${p.depth ? ' Â· ' + p.depth.toFixed(0) + ' m' : ''}</div>` +
+            `<div class="head">${p.well || 'sample'}${p.depth ? ' · ' + p.depth.toFixed(0) + ' m' : ''}</div>` +
             `<div class="row"><span class="key">GR</span><span class="val">${p.gr.toFixed(1)} gAPI</span></div>` +
             `<div class="row"><span class="key">CALI</span><span class="val">${p.cali.toFixed(2)} in</span></div>` +
             (p.density     ? `<div class="row"><span class="key">Density</span><span class="val">${p.density.toFixed(2)} g/cc</span></div>` : '') +
-            (p.resistivity ? `<div class="row"><span class="key">Resistivity</span><span class="val">${p.resistivity.toFixed(2)} ÃƒÅ½Ã‚Â©Â·m</span></div>` : '') +
+            (p.resistivity ? `<div class="row"><span class="key">Resistivity</span><span class="val">${p.resistivity.toFixed(2)} Ω·m</span></div>` : '') +
             `<div class="row"><span class="key">Zone</span><span class="val" style="color:${ZONE_COLOR[p.zone]}">${ZONE_LABEL[p.zone]}</span></div>`;
           tooltipEl.style.display = 'block';
         }
@@ -5338,7 +5338,7 @@
       }
     });
     $('#wlc-modal').addEventListener('click', e => {
-      // Click on the backdrop closes ÃƒÂ¢Ã‚â‚¬Ã‚â€ but only if we're in tracks mode.
+      // Click on the backdrop closes — but only if we're in tracks mode.
       if (e.target.id === 'wlc-modal' && !e.currentTarget.classList.contains('graph-mode')) {
         close();
       }
@@ -5355,7 +5355,7 @@
 
 <script>
 /* ============================================================
-   KNOWLEDGE GRAPH MODAL ÃƒÂ¢Ã‚â‚¬Ã‚â€ vanilla-JS module.
+   KNOWLEDGE GRAPH MODAL — vanilla-JS module.
    Synthetic cognee-style graph for the AASTRA Discovery case study.
 
    To swap in REAL cognee output later:
@@ -5363,7 +5363,7 @@
        then export { nodes:[{id,type,label,description?,radius?}], edges:[{s,t,label?}] } to JSON.
      - Replace the KG_GRAPH IIFE below with: fetch('./public/kg.json').then(...).
    Schema notes:
-     - Node `type` ÃƒÂ¢Ã‚Ë†Ã‚Ë† entity | entityType | summary | chunk | document
+     - Node `type` ∈ entity | entityType | summary | chunk | document
      - Edge endpoints `s` and `t` are node ids; `label` is the relation name.
    ============================================================ */
 (() => {
@@ -5419,7 +5419,7 @@
 
     // Wells
     const wTorosa   = add('entity', 'Torosa-1',   { radius: 17, description: 'Vertical exploration well in the Sample Offshore Basin.' });
-    const wZephyros = add('entity', 'Zephyros-1', { radius: 17, description: 'Reference well ÃƒÂ¢Ã‚â‚¬Ã‚â€ full metadata header available in the correlation panel.' });
+    const wZephyros = add('entity', 'Zephyros-1', { radius: 17, description: 'Reference well — full metadata header available in the correlation panel.' });
     const wK        = add('entity', 'K',          { radius: 17, description: 'Step-out well drilled east of Zephyros-1.' });
     [wTorosa, wZephyros, wK].forEach(w => link(w, tWell, 'is_a'));
 
@@ -5449,9 +5449,9 @@
     });
 
     // Lithologies
-    const liSand  = add('entity', 'Sandstone', { description: 'Quartz-rich clastic ÃƒÂ¢Ã‚â‚¬Ã‚â€ reservoir lithology.' });
+    const liSand  = add('entity', 'Sandstone', { description: 'Quartz-rich clastic — reservoir lithology.' });
     const liShale = add('entity', 'Shale',     { description: 'Fine-grained, low-permeability seal lithology.' });
-    const liMarl  = add('entity', 'Marl',      { description: 'Carbonate-rich mudstone ÃƒÂ¢Ã‚â‚¬Ã‚â€ mixed depositional setting.' });
+    const liMarl  = add('entity', 'Marl',      { description: 'Carbonate-rich mudstone — mixed depositional setting.' });
     [liSand, liShale, liMarl].forEach(l => link(l, tLi, 'is_a'));
     link(fPlS, liSand,  'has_lithology');
     link(fPlv, liSand,  'has_lithology');
@@ -5459,9 +5459,9 @@
     link(fJam, liMarl,  'has_lithology');
 
     // Zones (interpretation)
-    const zClean = add('entity', 'Clean Reservoir Sand', { radius: 14, description: 'GR < 45 gAPI ÃƒÂ¢Ã‚â‚¬Ã‚â€ prime reservoir quality.' });
-    const zShaly = add('entity', 'Shaly Sand',          { radius: 13, description: 'GR 45ÃƒÂ¢Ã‚â‚¬Ã‚â€œ80 gAPI ÃƒÂ¢Ã‚â‚¬Ã‚â€ marginal reservoir.' });
-    const zHigh  = add('entity', 'High Shale',          { radius: 13, description: 'GR > 80 gAPI ÃƒÂ¢Ã‚â‚¬Ã‚â€ non-reservoir.' });
+    const zClean = add('entity', 'Clean Reservoir Sand', { radius: 14, description: 'GR < 45 gAPI — prime reservoir quality.' });
+    const zShaly = add('entity', 'Shaly Sand',          { radius: 13, description: 'GR 45–80 gAPI — marginal reservoir.' });
+    const zHigh  = add('entity', 'High Shale',          { radius: 13, description: 'GR > 80 gAPI — non-reservoir.' });
     [zClean, zShaly, zHigh].forEach(z => link(z, tZo, 'is_a'));
     link(zClean, liSand,  'characterised_by');
     link(zShaly, liSand,  'characterised_by');
@@ -5474,7 +5474,7 @@
     const cGR  = add('entity', 'GR',          { description: 'Gamma-ray (gAPI). Lithology indicator.' });
     const cCAL = add('entity', 'CALI',        { description: 'Caliper (in). Borehole quality.' });
     const cDEN = add('entity', 'Density',     { description: 'Bulk density (g/cc).' });
-    const cRES = add('entity', 'Resistivity', { description: 'Deep resistivity (ÃƒÅ½Ã‚Â©Â·m). Hydrocarbon indicator.' });
+    const cRES = add('entity', 'Resistivity', { description: 'Deep resistivity (Ω·m). Hydrocarbon indicator.' });
     [cGR, cCAL, cDEN, cRES].forEach(c => link(c, tCu, 'is_a'));
     [wTorosa, wZephyros, wK].forEach(w => {
       [cGR, cCAL, cDEN, cRES].forEach(c => link(w, c, 'logged_with'));
@@ -5485,7 +5485,7 @@
     link(cCAL, liShale,'sensitive_to');
     link(cRES, fPlS,   'highlights_pay_in');
 
-    // Sample nodes ÃƒÂ¢Ã‚â‚¬Ã‚â€ pull a subset of cross-plot points from the WLC dataset
+    // Sample nodes — pull a subset of cross-plot points from the WLC dataset
     const sampleNodes = [];
     const wellByName = { 'Torosa-1': wTorosa, 'Zephyros-1': wZephyros, 'K': wK };
     if (window.__WLC && window.__WLC.crossPlot && window.__WLC.crossPlot.points.length) {
@@ -5494,8 +5494,8 @@
       for (let i = 0; i < pts.length; i += stride) {
         const p = pts[i];
         const sNode = add('entity',
-          `${p.well.split('-')[0].slice(0,3)} Â· ${Math.round(p.depth)} m`,
-          { radius: 10, description: `${p.well} at ${p.depth.toFixed(1)} m MD: GR ${p.gr.toFixed(1)} gAPI Â· CALI ${p.cali.toFixed(2)} in Â· Rt ${p.resistivity.toFixed(2)} ÃƒÅ½Ã‚Â©Â·m.` }
+          `${p.well.split('-')[0].slice(0,3)} · ${Math.round(p.depth)} m`,
+          { radius: 10, description: `${p.well} at ${p.depth.toFixed(1)} m MD: GR ${p.gr.toFixed(1)} gAPI · CALI ${p.cali.toFixed(2)} in · Rt ${p.resistivity.toFixed(2)} Ω·m.` }
         );
         sNode._xpIdx = i;
         sampleNodes.push(sNode);
@@ -5506,15 +5506,15 @@
       }
     }
 
-    // Evidence Snippets ÃƒÂ¢Ã‚â‚¬Ã‚â€ small supporting facts the graph extracts from
+    // Evidence Snippets — small supporting facts the graph extracts from
     // the well logs / cross plot / metadata. Label is a short geoscience
     // headline; description is the full snippet text.
     const chunks = [];
     const chunkSpecs = [
-      ['132 m net sand Â· Zephyros-1', 'Plover Fm. presents net sand of 132 m at Zephyros-1, with average GR of 28 gAPI in cleaner intervals.', [fPlv, fPlS, wZephyros, cGR, zClean]],
+      ['132 m net sand · Zephyros-1', 'Plover Fm. presents net sand of 132 m at Zephyros-1, with average GR of 28 gAPI in cleaner intervals.', [fPlv, fPlS, wZephyros, cGR, zClean]],
       ['Jamieson CALI washout to 11.4 in', 'CALI in the upper Jamieson interval shows washouts up to 11.4 in, indicative of incompetent shale.', [fJam, cCAL, liShale]],
-      ['Plover Sand Rt peak 24 ÃƒÅ½Ã‚Â©Â·m', 'Resistivity in the Plover Sand peaks at 24 ÃƒÅ½Ã‚Â©Â·m, consistent with a hydrocarbon-bearing reservoir.', [fPlS, cRES, zClean]],
-      ['Torosa-1 â†â€ K horizons match', 'Torosa-1 and K wells correlate cleanly across all four horizons; section dips ~120 m east.', [wTorosa, wK, fPlv, fJam]],
+      ['Plover Sand Rt peak 24 Ω·m', 'Resistivity in the Plover Sand peaks at 24 Ω·m, consistent with a hydrocarbon-bearing reservoir.', [fPlS, cRES, zClean]],
+      ['Torosa-1 ↔ K horizons match', 'Torosa-1 and K wells correlate cleanly across all four horizons; section dips ~120 m east.', [wTorosa, wK, fPlv, fJam]],
       ['Jamieson marl seal', 'Marl-rich intervals within Jamieson TE2 form a regional seal above the Plover reservoir.', [fJam, liMarl, fPlv]],
       ['Three CALI/GR populations', 'Cross-plot CALI vs GR shows three populations corresponding to clean sand, shaly sand and shale.', [cCAL, cGR, zClean, zShaly, zHigh]],
       ['Seismic confirms closure', 'AASTRA 3D PS imaging confirms structural closure across all three wells.', [survey, wTorosa, wZephyros, wK]],
@@ -5526,10 +5526,10 @@
       for (const r of rels) link(ch, r, 'mentions');
     });
 
-    // Source Views ÃƒÂ¢Ã‚â‚¬Ã‚â€ the panels in the case-study UI that the graph was
+    // Source Views — the panels in the case-study UI that the graph was
     // extracted from. Treated as the "documents" of the knowledge graph.
     const docCorr = add('document', 'Well Log Correlation',  { radius: 13, description: 'Three-track correlation section showing GR curves, formation tops, and lithology blocks across Torosa-1, Zephyros-1 and K.' });
-    const docXp   = add('document', 'CALI vs GR Cross Plot', { radius: 13, description: 'Caliper vs gamma-ray scatter coloured by interpretation zone ÃƒÂ¢Ã‚â‚¬Ã‚â€ clean sand, shaly sand, high shale.' });
+    const docXp   = add('document', 'CALI vs GR Cross Plot', { radius: 13, description: 'Caliper vs gamma-ray scatter coloured by interpretation zone — clean sand, shaly sand, high shale.' });
     const docTops = add('document', 'Formation Tops',         { radius: 13, description: 'Picked formation top depths for Jamieson TE2, Plover Fm. Top, Plover Sand and Plover Base.' });
     const docHdr  = add('document', 'Header Metadata',        { radius: 13, description: 'Surface coordinates, KB, water depth and TD for Zephyros-1 and the other wells.' });
     const docScn  = add('document', '3D Scene',                { radius: 13, description: 'Pre-stack seismic interpretation showing structural closure and well trajectories.' });
@@ -5541,11 +5541,11 @@
       [docScn,  [6, 3]]
     ].forEach(([d, ix]) => ix.forEach(i => link(d, chunks[i], 'sourced_from')));
 
-    // Insights ÃƒÂ¢Ã‚â‚¬Ã‚â€ interpreted / computed conclusions across the dataset.
-    const insBest    = add('summary', 'Best Reservoir Candidate',   { radius: 14, description: 'Plover Sand at Zephyros-1 ÃƒÂ¢Ã‚â‚¬Ã‚â€ net pay 132 m, GR ~28 gAPI, Rt ~24 ÃƒÅ½Ã‚Â©Â·m. Highest reservoir quality across the section.' });
+    // Insights — interpreted / computed conclusions across the dataset.
+    const insBest    = add('summary', 'Best Reservoir Candidate',   { radius: 14, description: 'Plover Sand at Zephyros-1 — net pay 132 m, GR ~28 gAPI, Rt ~24 Ω·m. Highest reservoir quality across the section.' });
     const insCorrel  = add('summary', 'Cross-Well Correlation',     { radius: 13, description: 'All four horizons correlate cleanly between Torosa-1 and Zephyros-1; section dips ~120 m east.' });
-    const insRisk    = add('summary', 'High Shale Risk',            { radius: 13, description: 'Upper Jamieson and Upper Shale intervals show GR > 100 gAPI plus CALI washouts up to 11.4 in ÃƒÂ¢Ã‚â‚¬Ã‚â€ non-reservoir, possible hole stability concern.' });
-    const insStable  = add('summary', 'Stable Borehole Interval',   { radius: 13, description: 'Plover Sand interval shows CALI close to 8.5" bit size and clean GR ÃƒÂ¢Ã‚â‚¬Ã‚â€ competent borehole, drillable conditions.' });
+    const insRisk    = add('summary', 'High Shale Risk',            { radius: 13, description: 'Upper Jamieson and Upper Shale intervals show GR > 100 gAPI plus CALI washouts up to 11.4 in — non-reservoir, possible hole stability concern.' });
+    const insStable  = add('summary', 'Stable Borehole Interval',   { radius: 13, description: 'Plover Sand interval shows CALI close to 8.5" bit size and clean GR — competent borehole, drillable conditions.' });
 
     link(insBest,   fPlS,    'about'); link(insBest,   wZephyros,'about'); link(insBest,   zClean, 'about');
     link(insBest,   chunks[0], 'cites'); link(insBest,   chunks[2], 'cites');
@@ -5642,7 +5642,7 @@
       // Label rules: skip on chunks (visual noise); shorten if needed
       if (n.type !== 'chunk') {
         let lbl = n.label;
-        if (lbl.length > 18) lbl = lbl.slice(0, 17) + 'ÃƒÂ¢Ã‚â‚¬Ã‚Â¦';
+        if (lbl.length > 18) lbl = lbl.slice(0, 17) + '…';
         const t = tx(lbl, { class: 'kg-node-label' + (n.type === 'document' ? '' : '') });
         g.appendChild(t);
       }
@@ -5653,7 +5653,7 @@
       return g;
     });
 
-    // Size + pan/zoom ÃƒÂ¢Ã‚â‚¬Ã‚â€ sized to the graph wrap inside the WLC modal's left frame.
+    // Size + pan/zoom — sized to the graph wrap inside the WLC modal's left frame.
     const wrap = svg.parentElement;
     const setSize = () => {
       const r = wrap.getBoundingClientRect();
@@ -5935,7 +5935,7 @@
       });
       applyClasses(matchIds, litEdges);
     });
-    // Cross-plot click â†â€™ swap the WLC left frame to the knowledge graph.
+    // Cross-plot click → swap the WLC left frame to the knowledge graph.
     // Featured points focus on their specific sample/well node; dense points
     // fall back to focusing on the well node by name.
     document.addEventListener('click', e => {
@@ -5964,7 +5964,7 @@
     });
   }
 
-  // Type filter ÃƒÂ¢Ã‚â‚¬Ã‚â€ dim everything except nodes of the chosen layer + their
+  // Type filter — dim everything except nodes of the chosen layer + their
   // 1-hop neighbors. Clicking the active layer again clears the filter.
   let activeLayer = null;
   function toggleLayerFilter(type) {
